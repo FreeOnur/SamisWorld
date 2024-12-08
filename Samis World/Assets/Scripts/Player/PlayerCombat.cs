@@ -6,9 +6,11 @@ public class PlayerCombat : MonoBehaviour
 {
     [SerializeField] private Animator animator;
 
-    [SerializeField] private Transform attackPoint;
-    [SerializeField] private float attackRange = 0.5f;
     [SerializeField] private LayerMask enemyLayers;
+    [SerializeField] private Transform attackPoint;
+
+    [SerializeField] private float attackRange = 0.5f;
+    [SerializeField] private int attackDamage = 40;
     void Update()
     {
          
@@ -31,7 +33,7 @@ public class PlayerCombat : MonoBehaviour
         //Damage them
         foreach(Collider2D enemy in hitEnemies)
         {
-            Debug.Log("We hit " + enemy.name);
+            enemy.GetComponent<Enemy>().TakeDamage(attackDamage);
         }
     }
 
