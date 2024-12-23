@@ -35,9 +35,6 @@ public class PlayerMovement : MonoBehaviour
         horizontalInput = Input.GetAxisRaw("Horizontal");
         jump(); //Handles the stuff for jumping
         Flip();
-        
-        waitingAnim(); //Handles the isIdle bool an uses it for the waiting animation
-        
     }
     private void FixedUpdate()
     {
@@ -81,26 +78,6 @@ public class PlayerMovement : MonoBehaviour
             playerRb.velocity = new Vector2(playerRb.velocity.x, playerRb.velocity.y * 0.5f);
         }
         animator.SetBool("isJumping", !IsGrounded());
-    }
-    private void waitingAnim()
-    {
-        //looks if the player is moving or doing anything
-        if (idleCheck())
-        {
-            idleTime += Time.deltaTime;
-            animator.SetFloat("waitingTime", idleTime);
-            if (idleTime > 3)
-            {
-                animator.SetBool("isWaiting", true);
-            }
-
-        }
-        else
-        {
-            idleTime = 0f;
-            animator.SetBool("isWaiting", false);
-
-        }
     }
 }
 
