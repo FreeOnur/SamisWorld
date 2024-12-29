@@ -9,9 +9,9 @@ public class RunState : PlayerState
 
     public override void Enter()
     {
-        animator.SetBool("isWaiting", false);
-    }
 
+    }
+    //switches states based on conditions
     public override void HandleInput()
     {
         if (Mathf.Abs(player.HorizontalInput) < 0.1f)
@@ -30,7 +30,7 @@ public class RunState : PlayerState
     public override void PhysicsUpdate()
     {
         rb.velocity = new Vector2(player.HorizontalInput * player.PlayerSpeed, rb.velocity.y);
-        animator.SetFloat("xVelocity", Mathf.Abs(rb.velocity.x));
+        
     }
 
     public override void Exit() { }

@@ -8,11 +8,11 @@ public class IdleState : PlayerState
 
     public override void Enter()
     {
-        animator.SetFloat("xVelocity", 0f);
-        animator.SetBool("isJumping", false);
+        
         idleTime = 0f;
     }
 
+    //switches states based on conditions
     public override void HandleInput()
     {
         if (Mathf.Abs(player.HorizontalInput) > 0.1f)
@@ -26,17 +26,6 @@ public class IdleState : PlayerState
             player.ChangeState(new JumpState(player));
             return;
         }
-
-        // Handle waiting animation
-        if (Mathf.Abs(rb.velocity.x) < 0.1f && Mathf.Abs(rb.velocity.y) < 0.1f)
-        {
-            idleTime += Time.deltaTime;
-            animator.SetFloat("waitingTime", idleTime);
-            if (idleTime > 3)
-            {
-                animator.SetBool("isWaiting", true);
-            }
-        }
     }
 
     public override void PhysicsUpdate()
@@ -46,6 +35,5 @@ public class IdleState : PlayerState
 
     public override void Exit()
     {
-        animator.SetBool("isWaiting", false);
     }
 }

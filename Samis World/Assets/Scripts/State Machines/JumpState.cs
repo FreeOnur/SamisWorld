@@ -5,13 +5,12 @@ using UnityEngine;
 public class JumpState : PlayerState
 {
     public JumpState(PlayerMovement player) : base(player) { }
-
+    
     public override void Enter()
     {
-        animator.SetBool("isJumping", true);
         rb.velocity = new Vector2(rb.velocity.x, player.JumpPower);
     }
-
+    //switches states based on conditions
     public override void HandleInput()
     {
         if (Input.GetKeyUp(KeyCode.Space) && rb.velocity.y > 0f)
@@ -31,11 +30,11 @@ public class JumpState : PlayerState
     public override void PhysicsUpdate()
     {
         rb.velocity = new Vector2(player.HorizontalInput * player.PlayerSpeed, rb.velocity.y);
-        animator.SetFloat("yVelocity", rb.velocity.y);
+        
     }
 
     public override void Exit()
     {
-        animator.SetBool("isJumping", false);
+        
     }
 }

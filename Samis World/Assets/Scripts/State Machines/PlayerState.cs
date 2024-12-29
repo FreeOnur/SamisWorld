@@ -5,6 +5,7 @@ public abstract class PlayerState
     protected PlayerMovement player;
     protected Rigidbody2D rb;
     protected Animator animator;
+    protected AnimatorBrain animatorBrain;
 
     public PlayerState(PlayerMovement player)
     {
