@@ -21,6 +21,7 @@ AnimationClip:
   - serializedVersion: 2
     curve:
     - time: 0
+<<<<<<< Updated upstream:Samis World/Assets/Animations/Wait.anim
       value: {fileID: 21300000, guid: 966098f0d201f0347894781d9551df2a, type: 3}
     - time: 0.11666667
       value: {fileID: 21300000, guid: b9036f3e5e4979749992aaa3f36c3133, type: 3}
@@ -30,6 +31,9 @@ AnimationClip:
       value: {fileID: 21300000, guid: 64f1958019aa0e449969592405616884, type: 3}
     - time: 0.46666667
       value: {fileID: 21300000, guid: 7a76b79864149fb488054bf3221a0de1, type: 3}
+=======
+      value: {fileID: 21300000, guid: 82fb4aa86051e024791405e5397b7ce6, type: 3}
+>>>>>>> Stashed changes:Samis World/Assets/Animations/Landing.anim
     attribute: m_Sprite
     path: 
     classID: 212
@@ -52,17 +56,25 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     pptrCurveMapping:
+<<<<<<< Updated upstream:Samis World/Assets/Animations/Wait.anim
     - {fileID: 21300000, guid: 966098f0d201f0347894781d9551df2a, type: 3}
     - {fileID: 21300000, guid: b9036f3e5e4979749992aaa3f36c3133, type: 3}
     - {fileID: 21300000, guid: ab029bb14faadfb489c9b8e3fd50c7c1, type: 3}
     - {fileID: 21300000, guid: 64f1958019aa0e449969592405616884, type: 3}
     - {fileID: 21300000, guid: 7a76b79864149fb488054bf3221a0de1, type: 3}
+=======
+    - {fileID: 21300000, guid: 82fb4aa86051e024791405e5397b7ce6, type: 3}
+>>>>>>> Stashed changes:Samis World/Assets/Animations/Landing.anim
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}
     m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
+<<<<<<< Updated upstream:Samis World/Assets/Animations/Wait.anim
     m_StopTime: 0.48333335
+=======
+    m_StopTime: 0.016666668
+>>>>>>> Stashed changes:Samis World/Assets/Animations/Landing.anim
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0

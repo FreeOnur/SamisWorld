@@ -10,7 +10,6 @@ public class PlayerController : MonoBehaviour
     {
         playerCombat = GetComponent<PlayerCombat>();        
     }
-
     // Update is called once per frame
     void Update()
     {

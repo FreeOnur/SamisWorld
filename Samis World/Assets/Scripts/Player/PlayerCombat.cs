@@ -5,7 +5,6 @@ using UnityEngine;
 public class PlayerCombat : MonoBehaviour
 {
     [SerializeField] private Animator animator;
-
     [SerializeField] private Transform attackPoint;
     [SerializeField] private float attackRange = 0.5f;
     [SerializeField] private LayerMask enemyLayers;
@@ -13,7 +12,6 @@ public class PlayerCombat : MonoBehaviour
     {
          
     }
-
     public void Attack(int attackPower)
     {
         //Play an attack animation
@@ -24,17 +22,14 @@ public class PlayerCombat : MonoBehaviour
                 animator.SetTrigger("Attack");
                 break;
         }
-
         //Detect enemies in range of attack
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
-
         //Damage them
         foreach(Collider2D enemy in hitEnemies)
         {
             Debug.Log("We hit " + enemy.name);
         }
     }
-
     private void OnDrawGizmosSelected()
     {
         if(attackPoint ==null)
