@@ -25,7 +25,7 @@ public class PlayerMovement : AnimatorBrain
     private bool wasGrounded = true;
 
     private bool isPlayingLandingAnimation = false;
-    private float landingAnimationDuration = 0.3f;
+    private float landingAnimationDuration = 0.05f;
 
 
     // Properties to access private fields
