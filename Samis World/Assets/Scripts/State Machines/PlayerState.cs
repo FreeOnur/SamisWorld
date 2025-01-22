@@ -10,8 +10,8 @@ public abstract class PlayerState
     public PlayerState(PlayerMovement player)
     {
         this.player = player;
-        this.rb = player.PlayerRb;  // You'll need to add this property
-        this.animator = player.Anim;  // You'll need to add this property
+        this.rb = player.PlayerRb;
+        this.animator = player.Anim; 
     }
 
     public abstract void Enter();

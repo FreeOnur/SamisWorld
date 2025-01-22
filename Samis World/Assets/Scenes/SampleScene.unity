@@ -382,6 +382,7 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
+  dustPrefab: {fileID: 2815983119332917437, guid: e7c4b033a8eef724982571dd144e0eb6, type: 3}
 --- !u!95 &840860354
 Animator:
   serializedVersion: 5

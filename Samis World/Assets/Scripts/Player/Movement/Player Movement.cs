@@ -19,6 +19,7 @@ public class PlayerMovement : AnimatorBrain
     private PlayerState currentState;
     private Rigidbody2D rb;
     private Animator animator;
+    private DashState dashState;
     private float horizontalInput;
     private bool isFacingRight = true;
     private float layer = 0;
@@ -26,6 +27,8 @@ public class PlayerMovement : AnimatorBrain
 
     private bool isPlayingLandingAnimation = false;
     private float landingAnimationDuration = 0.05f;
+
+    [SerializeField] private GameObject dustPrefab;
 
 
     // Properties to access private fields
@@ -90,6 +93,10 @@ public class PlayerMovement : AnimatorBrain
     private void CheckMovementAnimations(int layer)
     {
         if (isPlayingLandingAnimation) return;
+        if(Input.GetKeyDown(KeyCode.F))
+        {
+            Play(Animations.DASH, layer,false,false);
+        }
         if (!IsGrounded())
         {
             if (rb.velocity.y > 0)
@@ -101,11 +108,10 @@ public class PlayerMovement : AnimatorBrain
         else if (Mathf.Abs(PlayerRb.velocity.x) > 0.1f && Mathf.Abs(horizontalInput) > 0.1f)
         {
             Play(Animations.RUN, layer, false, false);
-        }
-        else
+        }else
         {
             Play(Animations.IDLE, layer, false, false);
-        }
+        } 
     }
 
     
@@ -147,5 +153,18 @@ public class PlayerMovement : AnimatorBrain
 
         isPlayingLandingAnimation = false;
         SetLocked(false, 0); // Unlock the animation layer
+    }
+
+    // For the dash Function
+    public void SpawnDust(Vector3 position, bool facingRight)
+    {
+        if (dustPrefab != null)
+        {
+            GameObject dust = Instantiate(dustPrefab, position, Quaternion.identity);
+            Vector3 scale = dust.transform.localScale;
+            scale.x = facingRight ? Mathf.Abs(scale.x) : -Mathf.Abs(scale.x); // Flip on the X-axis
+            dust.transform.localScale = scale;
+            Destroy(dust, 1f);
+        }
     }
 }
