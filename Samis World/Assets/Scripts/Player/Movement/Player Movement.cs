@@ -1,37 +1,26 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using Unity.IO.LowLevel.Unsafe;
 using UnityEngine;
-using UnityEngine.Playables;
 
 public class PlayerMovement : AnimatorBrain
 {
-
     [SerializeField] private int playerSpeed;
     [SerializeField] private float jumpPower = 5f;
-    //variables vor the raycast to check if it hits the ground
     [SerializeField] private Transform groundCheck;
     [SerializeField] private LayerMask groundLayer;
+    [SerializeField] private GameObject dustPrefab;
 
     public static PlayerMovement instance;
-    //used for state machine
+
     private PlayerState currentState;
     private Rigidbody2D rb;
     private Animator animator;
-    private DashState dashState;
     private float horizontalInput;
     private bool isFacingRight = true;
-    private float layer = 0;
     private bool wasGrounded = true;
-
     private bool isPlayingLandingAnimation = false;
     private float landingAnimationDuration = 0.05f;
 
-    [SerializeField] private GameObject dustPrefab;
-
-
-    // Properties to access private fields
+    // Eigenschaften für den Zugriff auf private Felder
     public Rigidbody2D PlayerRb => rb;
     public Animator Anim => animator;
     public float HorizontalInput => horizontalInput;
@@ -54,29 +43,43 @@ public class PlayerMovement : AnimatorBrain
 
     private void Update()
     {
+        // Spieler-Input einholen
         horizontalInput = Input.GetAxisRaw("Horizontal");
+
+        // Aktuellen Zustand behandeln
         currentState?.HandleInput();
+
+        // Spieler drehen, wenn nötig
         Flip();
-        CheckMovementAnimations(0);
+
+        // Bewegung und Animation prüfen
+        if (!(currentState is DashState)) // DashState soll Animationen exklusiv steuern
+        {
+            CheckMovementAnimations(0);
+        }
+
         CheckFallAndLandAnimations();
     }
 
     private void FixedUpdate()
     {
+        // Physik-Updates des aktuellen Zustands
         currentState?.PhysicsUpdate();
     }
+
     public bool IsGrounded()
     {
         return Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
     }
+
     public void ChangeState(PlayerState newState)
     {
+        // Alten Zustand beenden und neuen Zustand starten
         currentState?.Exit();
         currentState = newState;
         currentState?.Enter();
     }
 
-    //Is flipping the 2d character based on which side he is going
     private void Flip()
     {
         if (isFacingRight && horizontalInput < 0f || !isFacingRight && horizontalInput > 0f)
@@ -88,83 +91,68 @@ public class PlayerMovement : AnimatorBrain
         }
     }
 
-   
-    //Checks which movement the player is doing
     private void CheckMovementAnimations(int layer)
     {
         if (isPlayingLandingAnimation) return;
-        if(Input.GetKeyDown(KeyCode.F))
-        {
-            Play(Animations.DASH, layer,false,false);
-        }
+
         if (!IsGrounded())
         {
             if (rb.velocity.y > 0)
             {
                 Play(Animations.JUMP, layer, false, false);
             }
-            
         }
-        else if (Mathf.Abs(PlayerRb.velocity.x) > 0.1f && Mathf.Abs(horizontalInput) > 0.1f)
+        else if (Mathf.Abs(rb.velocity.x) > 0.1f && Mathf.Abs(horizontalInput) > 0.1f)
         {
             Play(Animations.RUN, layer, false, false);
-        }else
+        }
+        else
         {
             Play(Animations.IDLE, layer, false, false);
-        } 
-    }
-
-    
-    void DefaultAnimation(int layer)
-    {
-        CheckMovementAnimations(0);
-    }
-    void CheckJump()
-    {
-        if (Input.GetKeyDown(KeyCode.Space) && IsGrounded())
-        {
-            Play(Animations.JUMP, 0, true, false);
         }
     }
+
     private void CheckFallAndLandAnimations()
     {
         bool isGrounded = IsGrounded();
+
         if (!wasGrounded && isGrounded && !isPlayingLandingAnimation)
         {
             StartCoroutine(PlayLandingAnimation());
         }
-
-        // Play falling animation when not grounded and moving downward
         else if (!isGrounded && rb.velocity.y < 0)
         {
             Play(Animations.FALL, 0, false, false);
         }
-        
-        wasGrounded = isGrounded; // Update the grounded state
+
+        wasGrounded = isGrounded;
     }
 
     private IEnumerator PlayLandingAnimation()
     {
         isPlayingLandingAnimation = true;
-        Play(Animations.JUMPEND, 0, true, true); // Lock the animation and bypass other locks
+        Play(Animations.JUMPEND, 0, true, true); // Animation sperren und abspielen
 
-        // Wait for the landing animation duration
         yield return new WaitForSeconds(landingAnimationDuration);
 
         isPlayingLandingAnimation = false;
-        SetLocked(false, 0); // Unlock the animation layer
+        SetLocked(false, 0); // Animation entsperren
     }
 
-    // For the dash Function
     public void SpawnDust(Vector3 position, bool facingRight)
     {
         if (dustPrefab != null)
         {
             GameObject dust = Instantiate(dustPrefab, position, Quaternion.identity);
             Vector3 scale = dust.transform.localScale;
-            scale.x = facingRight ? Mathf.Abs(scale.x) : -Mathf.Abs(scale.x); // Flip on the X-axis
+            scale.x = facingRight ? Mathf.Abs(scale.x) : -Mathf.Abs(scale.x);
             dust.transform.localScale = scale;
             Destroy(dust, 1f);
         }
+    }
+
+    void DefaultAnimation(int layer)
+    {
+        CheckMovementAnimations(0);
     }
 }
