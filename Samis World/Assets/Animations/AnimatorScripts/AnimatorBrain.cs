@@ -13,7 +13,8 @@ public class AnimatorBrain : MonoBehaviour
         Animator.StringToHash("Hit"),
         Animator.StringToHash("Jump"),
         Animator.StringToHash("Landing"),
-        Animator.StringToHash("Fall")
+        Animator.StringToHash("Fall"),
+        Animator.StringToHash("Dash")
     };
     private Animator animator;
     private Animations[] currentAnimation;
@@ -77,5 +78,6 @@ public enum Animations
     JUMP,
     JUMPEND,
     FALL,
+    DASH,
     NONE
 }

@@ -25,6 +25,12 @@ public class RunState : PlayerState
             player.ChangeState(new JumpState(player));
             return;
         }
+
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            player.ChangeState(new DashState(player));
+            return;
+        }
     }
 
     public override void PhysicsUpdate()
