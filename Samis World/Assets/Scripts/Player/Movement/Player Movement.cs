@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class PlayerMovement : AnimatorBrain
 {
-    [SerializeField] private int playerSpeed;
-    [SerializeField] private float jumpPower = 5f;
+    [SerializeField] private int playerSpeed = 5;
+    [SerializeField] private float jumpPower = 12f;
     [SerializeField] private Transform groundCheck;
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private GameObject dustPrefab;
@@ -19,6 +19,13 @@ public class PlayerMovement : AnimatorBrain
     private bool wasGrounded = true;
     private bool isPlayingLandingAnimation = false;
     private float landingAnimationDuration = 0.05f;
+    [SerializeField] private float gravityMultiplier = 0.2f;
+    [SerializeField] private float fastFallGravityMult = 3f; // when downbutton is pressed
+    [SerializeField] private float gravityScale = 6f;
+    [SerializeField] private float maxFallSpeed = 50f;
+    public bool isJumping;
+    public float jumpHangTimeThreshold = 4f;
+    public float jumpHangGravityMultiplier = -0.3f;
 
     // Eigenschaften für den Zugriff auf private Felder
     public Rigidbody2D PlayerRb => rb;
@@ -26,6 +33,12 @@ public class PlayerMovement : AnimatorBrain
     public float HorizontalInput => horizontalInput;
     public int PlayerSpeed => playerSpeed;
     public float JumpPower => jumpPower;
+    public float GravityMultiplier => gravityMultiplier;
+
+    public float FastFallGravityMult => fastFallGravityMult;
+    public float GravityScale => gravityScale;
+
+    public float MaxFallSpeed => maxFallSpeed;
 
     private void Awake()
     {
