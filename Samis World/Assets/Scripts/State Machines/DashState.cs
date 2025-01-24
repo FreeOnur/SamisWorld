@@ -3,7 +3,7 @@ using UnityEngine;
 public class DashState : PlayerState
 {
     [SerializeField] private float dashSpeed = 20f;
-    [SerializeField] private float dashDuration = 0.2f; // Dauer des Dashes
+    [SerializeField] private float dashDuration = 0.15f; // Dauer des Dashes
     private float dashTime;
     private bool isDashing;
 

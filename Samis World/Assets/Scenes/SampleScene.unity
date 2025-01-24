@@ -376,13 +376,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d5d857e15462504b8a1bc22f62b2d1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerSpeed: 5
-  jumpPower: 9
+  playerSpeed: 8
+  jumpPower: 12
   groundCheck: {fileID: 562680309}
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
   dustPrefab: {fileID: 2815983119332917437, guid: e7c4b033a8eef724982571dd144e0eb6, type: 3}
+  gravityMultiplier: 0.3
+  fastFallGravityMult: 3
+  gravityScale: 6
+  maxFallSpeed: 50
+  isJumping: 0
+  jumpHangTimeThreshold: 0.4
+  jumpHangGravityMultiplier: 0.3
 --- !u!95 &840860354
 Animator:
   serializedVersion: 5
