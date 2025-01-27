@@ -40,7 +40,7 @@ public class JumpState : PlayerState
             rb.gravityScale = playerData.GravityScale * playerData.FastFallGravityMult;
             rb.velocity = new Vector2(rb.velocity.x, Mathf.Max(rb.velocity.y, -playerData.MaxFallSpeed));
         }
-        if (Input.GetKeyDown(KeyCode.Mouse0) && !combos.atacando)
+        if (Input.GetKeyDown(KeyCode.Mouse0) && !combos.isAttacking)
         {
             combos.Comboss();
         }

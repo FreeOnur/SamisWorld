@@ -33,7 +33,7 @@ public class IdleState : PlayerState
             player.ChangeState(new DashState(player));
             return;
         }
-        if (Input.GetKeyDown(KeyCode.Mouse0) && !combos.atacando)
+        if (Input.GetKeyDown(KeyCode.Mouse0) && !combos.isAttacking)
         {
             combos.Comboss();
         }
