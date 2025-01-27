@@ -4,13 +4,13 @@ public class Combos : MonoBehaviour
 {
     public Animator animator;
     public int combo;
-    public bool atacando;
+    public bool isAttacking;
 
     public void Comboss()
     {
-        if (Input.GetKeyDown(KeyCode.Mouse0) && !atacando)
+        if (Input.GetKeyDown(KeyCode.Mouse0) && !isAttacking)
         {
-            atacando = true;
+            isAttacking = true;
             
             // Alle vorherigen Trigger zurücksetzen
             animator.ResetTrigger("1");
@@ -30,7 +30,7 @@ public class Combos : MonoBehaviour
         if (combo < 2) // Ändern auf 2 für max 3 Attacken
         {
             combo++;
-            atacando = false;
+            isAttacking = false;
             Debug.Log("Combo increased to: " + combo);
         }
         else
@@ -42,7 +42,7 @@ public class Combos : MonoBehaviour
     public void FinishAnimation()
     {
         Debug.Log("FinishAnimation called");
-        atacando = false;
+        isAttacking = false;
         combo = 0;
         
         // Alle Trigger zurücksetzen beim Beenden
@@ -54,7 +54,7 @@ public class Combos : MonoBehaviour
     void Start()
     {
         combo = 0;
-        atacando = false;
+        isAttacking = false;
     }
 
     void Update()
