@@ -60,7 +60,7 @@ public class DashState : PlayerState
         }
         else
         {
-            player.PlayerRb.velocity = new Vector2(player.PlayerSpeed * player.HorizontalInput, player.PlayerRb.velocity.y);
+            player.PlayerRb.velocity = new Vector2(playerData.PlayerSpeed * player.HorizontalInput, player.PlayerRb.velocity.y);
         }
     }
 

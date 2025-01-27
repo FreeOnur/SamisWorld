@@ -3,14 +3,12 @@ using UnityEngine;
 
 public class PlayerMovement : AnimatorBrain
 {
-    [SerializeField] private int playerSpeed = 5;
-    [SerializeField] private float jumpPower = 12f;
+    
     [SerializeField] private Transform groundCheck;
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private GameObject dustPrefab;
 
     public static PlayerMovement instance;
-
     private PlayerState currentState;
     private Rigidbody2D rb;
     private Animator animator;
@@ -19,27 +17,16 @@ public class PlayerMovement : AnimatorBrain
     private bool wasGrounded = true;
     private bool isPlayingLandingAnimation = false;
     private float landingAnimationDuration = 0.05f;
-    [SerializeField] private float gravityMultiplier = 0.2f;
-    [SerializeField] private float fastFallGravityMult = 3f; // when downbutton is pressed
-    [SerializeField] private float gravityScale = 6f;
-    [SerializeField] private float maxFallSpeed = 50f;
     public bool isJumping;
     public float jumpHangTimeThreshold = 4f;
-    public float jumpHangGravityMultiplier = -0.3f;
+    
+    public PlayerData playerData;
+    
 
     // Eigenschaften für den Zugriff auf private Felder
     public Rigidbody2D PlayerRb => rb;
     public Animator Anim => animator;
     public float HorizontalInput => horizontalInput;
-    public int PlayerSpeed => playerSpeed;
-    public float JumpPower => jumpPower;
-    public float GravityMultiplier => gravityMultiplier;
-
-    public float FastFallGravityMult => fastFallGravityMult;
-    public float GravityScale => gravityScale;
-
-    public float MaxFallSpeed => maxFallSpeed;
-
     private void Awake()
     {
         instance = this;
@@ -48,7 +35,6 @@ public class PlayerMovement : AnimatorBrain
     private void Start()
     {
         Initialize(GetComponent<Animator>().layerCount, Animations.IDLE, GetComponent<Animator>(), DefaultAnimation);
-
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         ChangeState(new IdleState(this));
