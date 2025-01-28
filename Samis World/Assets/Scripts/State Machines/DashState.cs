@@ -8,18 +8,18 @@ public class DashState : PlayerState
     private bool isDashing;
 
     public DashState(PlayerMovement player) : base(player) { }
-
     public override void Enter()
     {
         dashTime = dashDuration;
         isDashing = true;
-
+        bool facingRight = player.transform.localScale.x > 0;
+        player.SpawnDust(new Vector3(player.transform.position.x, player.transform.position.y - 0.2f), facingRight);
         // Starte die Dash-Animation
         player.Play(Animations.DASH, 0, true, false);
 
         // Erstelle Staub-Effekt (optional)
-        bool facingRight = player.transform.localScale.x > 0;
-        player.SpawnDust(new Vector3(player.transform.position.x, player.transform.position.y - 0.2f), facingRight);
+
+       
     }
 
     public override void HandleInput()

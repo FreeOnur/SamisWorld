@@ -30,6 +30,8 @@ public class IdleState : PlayerState
 
         if (Input.GetKeyDown(KeyCode.F))
         {
+            bool facingRight = player.transform.localScale.x > 0;
+            player.SpawnDust(new Vector3(player.transform.position.x, player.transform.position.y - 0.2f), facingRight);
             player.ChangeState(new DashState(player));
             return;
         }
