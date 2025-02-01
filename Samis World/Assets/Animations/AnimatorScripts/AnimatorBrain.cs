@@ -14,7 +14,10 @@ public class AnimatorBrain : MonoBehaviour
         Animator.StringToHash("Jump"),
         Animator.StringToHash("Landing"),
         Animator.StringToHash("Fall"),
-        Animator.StringToHash("Dash")
+        Animator.StringToHash("Dash"),
+        Animator.StringToHash("Attack_1"),
+        Animator.StringToHash("Attack_2"),
+        Animator.StringToHash("Attack_3")
     };
     private Animator animator;
     private Animations[] currentAnimation;

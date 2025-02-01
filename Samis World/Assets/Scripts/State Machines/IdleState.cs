@@ -1,15 +1,16 @@
+using Unity.Burst.Intrinsics;
 using UnityEngine;
 
 public class IdleState : PlayerState
 {
-    private float idleTime = 0f;
+    private Combos combos;
 
     public IdleState(PlayerMovement player) : base(player) { }
 
     public override void Enter()
     {
-        
-        idleTime = 0f;
+        combos = player.GetComponent<Combos>();
+
     }
 
     //switches states based on conditions
@@ -29,8 +30,14 @@ public class IdleState : PlayerState
 
         if (Input.GetKeyDown(KeyCode.F))
         {
+            bool facingRight = player.transform.localScale.x > 0;
+            player.SpawnDust(new Vector3(player.transform.position.x, player.transform.position.y - 0.2f), facingRight);
             player.ChangeState(new DashState(player));
             return;
+        }
+        if (Input.GetKeyDown(KeyCode.Mouse0) && !combos.isAttacking)
+        {
+            combos.Comboss();
         }
     }
 
