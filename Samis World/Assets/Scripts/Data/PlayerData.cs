@@ -14,10 +14,15 @@ public class PlayerData : ScriptableObject
     public float GravityScale => gravityScale;
     public float MaxFallSpeed => maxFallSpeed;
     public float FastFallGravityMult => fastFallGravityMult;
+    [Space(5)]
     [Header("Speed")]
     [SerializeField] private float maxFallSpeed = 50f;
     [SerializeField] private int playerSpeed = 5;
     [SerializeField] private float jumpPower = 12f;
     public int PlayerSpeed => playerSpeed;
     public float JumpPower => jumpPower;
+    [Space(5)]
+    [Header("Attributes")]
+    public float health = 100f;
+    public float currentHealth = 0;
 }
