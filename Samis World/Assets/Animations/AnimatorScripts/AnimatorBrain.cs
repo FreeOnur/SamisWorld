@@ -17,7 +17,8 @@ public class AnimatorBrain : MonoBehaviour
         Animator.StringToHash("Dash"),
         Animator.StringToHash("Attack_1"),
         Animator.StringToHash("Attack_2"),
-        Animator.StringToHash("Attack_3")
+        Animator.StringToHash("Attack_3"),
+        Animator.StringToHash("Death")
     };
     private Animator animator;
     private Animations[] currentAnimation;
@@ -50,25 +51,50 @@ public class AnimatorBrain : MonoBehaviour
     }
 
     public void Play(Animations animation, int layer, bool lockLayer, bool bypassLock, float crossfade = 0.2f)
+{
+    // Prüfen, ob die notwendigen Felder initialisiert wurden
+    if (layerLocked == null || currentAnimation == null || animator == null)
     {
-        if(animation == Animations.NONE)
+        Debug.LogError("AnimatorBrain not initialized properly. Call Initialize before using Play.");
+        return;
+    }
+
+    // Prüfen, ob der Layer-Index gültig ist
+    if (layer < 0 || layer >= layerLocked.Length)
+    {
+        Debug.LogError($"Layer index {layer} out of range. Max index is {layerLocked.Length - 1}");
+        return;
+    }
+
+    if (animation == Animations.NONE)
+    {
+        if (DefaultAnimation == null)
         {
-            DefaultAnimation(layer);
+            Debug.LogWarning("DefaultAnimation not set but animation is NONE");
             return;
         }
+        DefaultAnimation(layer);
+        return;
+    }
 
-        if (layerLocked[layer] && !bypassLock) return;
-        layerLocked[layer] = lockLayer;
-
-       
-        if (currentAnimation[layer] == animation) return;
-
-        currentAnimation[layer] = animation;
-        animator.CrossFade(animations[(int)currentAnimation[layer]], crossfade, layer);
-
+    if (layerLocked[layer] && !bypassLock) return;
+    layerLocked[layer] = lockLayer;
+    
+    if (currentAnimation[layer] == animation) return;
+    currentAnimation[layer] = animation;
+    
+    // Überprüfen, ob die Animation im enum-Index-Bereich liegt
+    int animIndex = (int)currentAnimation[layer];
+    if (animIndex < 0 || animIndex >= animations.Length)
+    {
+        Debug.LogError($"Animation index {animIndex} is out of range. Max index is {animations.Length - 1}");
+        return;
     }
     
-    
+    animator.CrossFade(animations[animIndex], crossfade, layer);
+}
+
+
 }
 
 
@@ -82,5 +108,6 @@ public enum Animations
     JUMPEND,
     FALL,
     DASH,
+    DEATH,
     NONE
 }

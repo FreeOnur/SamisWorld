@@ -5,6 +5,7 @@ public class Combos : MonoBehaviour
     public Animator animator;
     public int combo;
     public bool isAttacking;
+    public Player playerScript;
 
     public void Comboss()
     {
@@ -59,6 +60,10 @@ public class Combos : MonoBehaviour
 
     void Update()
     {
+        if (playerScript.isDead)
+        {
+            this.enabled = false;
+        }
         Comboss();
     }
 }

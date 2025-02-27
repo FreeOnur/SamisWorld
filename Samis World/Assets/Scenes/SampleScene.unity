@@ -589,6 +589,7 @@ MonoBehaviour:
   isJumping: 0
   jumpHangTimeThreshold: 0.4
   playerData: {fileID: 11400000, guid: 7cc6dce4d40e082499ba85ffffb6b57b, type: 2}
+  playerScript: {fileID: 840860359}
 --- !u!95 &840860354
 Animator:
   serializedVersion: 5
@@ -689,6 +690,7 @@ MonoBehaviour:
   animator: {fileID: 840860354}
   combo: 0
   isAttacking: 0
+  playerScript: {fileID: 840860359}
 --- !u!114 &840860359
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -701,9 +703,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b9bbef818f09ca4491a4e7f2fc002e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  groundCheck: {fileID: 0}
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  dustPrefab: {fileID: 0}
+  isJumping: 0
+  jumpHangTimeThreshold: 4
   playerData: {fileID: 11400000, guid: 7cc6dce4d40e082499ba85ffffb6b57b, type: 2}
+  playerScript: {fileID: 0}
   currentHealth: 0
   healthBar: {fileID: 154656260}
+  animator: {fileID: 840860354}
+  isDead: 0
 --- !u!1 &971062427
 GameObject:
   m_ObjectHideFlags: 0

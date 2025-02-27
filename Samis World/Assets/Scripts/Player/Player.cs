@@ -2,21 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class Player : PlayerMovement
 {
-    public PlayerData playerData;
     [SerializeField] private float currentHealth;
     public HealthBar healthBar;
+    public Animator animator;
+    public bool isDead = false;
     void Start()
     {
+        Initialize(GetComponent<Animator>().layerCount, Animations.IDLE, GetComponent<Animator>(), DefaultAnimation);
         currentHealth = playerData.maxHealth;
         healthBar.SetMaxHealth(playerData.maxHealth);
     }
-
-    // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (isDead) return;
+        if (Input.GetKeyDown(KeyCode.L))
         {
             TakeDamage(20);
         }
@@ -34,6 +35,8 @@ public class Player : MonoBehaviour
 
     void Die()
     {
-        Destroy(gameObject);
+        if (isDead) return; // Prevent multiple calls
+        isDead = true;
     }
+
 }

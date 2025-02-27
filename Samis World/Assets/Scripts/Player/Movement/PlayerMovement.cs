@@ -1,9 +1,10 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerMovement : AnimatorBrain
 {
-    
+
     [SerializeField] private Transform groundCheck;
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private GameObject dustPrefab;
@@ -19,9 +20,10 @@ public class PlayerMovement : AnimatorBrain
     private float landingAnimationDuration = 0.05f;
     public bool isJumping;
     public float jumpHangTimeThreshold = 4f;
-    
+
     public PlayerData playerData;
-    
+    public Player playerScript;
+
 
     // Eigenschaften für den Zugriff auf private Felder
     public Rigidbody2D PlayerRb => rb;
@@ -66,12 +68,12 @@ public class PlayerMovement : AnimatorBrain
         currentState?.PhysicsUpdate();
     }
 
-    public bool IsGrounded()
+    public virtual bool IsGrounded()
     {
         return Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
     }
 
-    public void ChangeState(PlayerState newState)
+    public virtual void ChangeState(PlayerState newState)
     {
         // Alten Zustand beenden und neuen Zustand starten
         currentState?.Exit();
@@ -92,6 +94,13 @@ public class PlayerMovement : AnimatorBrain
 
     private void CheckMovementAnimations(int layer)
     {
+        if (playerScript != null && playerScript.isDead)
+        {
+            animator.SetTrigger("isDead");
+            this.enabled = false;
+            return; // Verhindert, dass andere Animationen abgespielt werden
+        }
+
         if (isPlayingLandingAnimation) return;
 
         if (!IsGrounded())
@@ -111,6 +120,7 @@ public class PlayerMovement : AnimatorBrain
         }
     }
 
+
     private void CheckFallAndLandAnimations()
     {
         bool isGrounded = IsGrounded();
@@ -129,13 +139,15 @@ public class PlayerMovement : AnimatorBrain
 
     private IEnumerator PlayLandingAnimation()
     {
+        if (playerScript != null && playerScript.isDead) yield break; // Don't play landing animation if dead
+
         isPlayingLandingAnimation = true;
-        Play(Animations.JUMPEND, 0, true, true); // Animation sperren und abspielen
+        Play(Animations.JUMPEND, 0, true, true); // Play landing animation
 
         yield return new WaitForSeconds(landingAnimationDuration);
 
         isPlayingLandingAnimation = false;
-        SetLocked(false, 0); // Animation entsperren
+        SetLocked(false, 0); // Unlock animation
     }
 
     public void SpawnDust(Vector3 position, bool facingRight)
@@ -150,7 +162,7 @@ public class PlayerMovement : AnimatorBrain
         }
     }
 
-    void DefaultAnimation(int layer)
+    public void DefaultAnimation(int layer)
     {
         CheckMovementAnimations(0);
     }
