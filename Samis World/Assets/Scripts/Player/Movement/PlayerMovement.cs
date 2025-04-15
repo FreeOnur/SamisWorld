@@ -24,6 +24,8 @@ public class PlayerMovement : AnimatorBrain
     public PlayerData playerData;
     public Player playerScript;
 
+    [HideInInspector] public bool ledgeDetected;
+
 
     // Eigenschaften für den Zugriff auf private Felder
     public Rigidbody2D PlayerRb => rb;
@@ -44,6 +46,7 @@ public class PlayerMovement : AnimatorBrain
 
     private void Update()
     {
+        Debug.Log(ledgeDetected);
         // Spieler-Input einholen
         horizontalInput = Input.GetAxisRaw("Horizontal");
 
