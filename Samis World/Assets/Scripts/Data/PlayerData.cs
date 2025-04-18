@@ -24,4 +24,6 @@ public class PlayerData : ScriptableObject
     [Space(5)]
     [Header("Attributes")]
     public float maxHealth = 100f;
+
+    public float wallJumpHorizontalForce = 5f;
 }

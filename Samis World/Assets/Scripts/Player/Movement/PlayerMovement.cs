@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 public class PlayerMovement : AnimatorBrain
 {
+    // Existierende Variablen bleiben unverändert
 
     [SerializeField] private Transform groundCheck;
     [SerializeField] private LayerMask groundLayer;
@@ -13,11 +15,15 @@ public class PlayerMovement : AnimatorBrain
     private PlayerState currentState;
     private Rigidbody2D rb;
     private Animator animator;
+
+    [Header("Move Info")]
     private float horizontalInput;
     private bool isFacingRight = true;
     private bool wasGrounded = true;
+    [Header("Animation Info")]
     private bool isPlayingLandingAnimation = false;
     private float landingAnimationDuration = 0.05f;
+    [Header("Jump Info")]
     public bool isJumping;
     public float jumpHangTimeThreshold = 4f;
 
@@ -26,11 +32,32 @@ public class PlayerMovement : AnimatorBrain
 
     [HideInInspector] public bool ledgeDetected;
 
+    [Header("Ledge Info")]
+    [SerializeField] private Vector2 offset1;
 
+    private Vector2 climbBegunPosition;
+    private bool canGrabLedge = true;
+    private bool canClimb;
+    private bool isHangingOnLedge = false;
+    [SerializeField] private LedgeDetection ledgeDetection;
+    [SerializeField] private Transform ledgeGrab;
+    Vector2 hangPosition;
+    Vector2 ledgePos;
+
+    // Neue Variable für Ledge-Jump-Kraft
+    [Header("Ledge Jump Info")]
+    [SerializeField] private float ledgeJumpForce = 12f;
+    [SerializeField] private float ledgeJumpHorizontalForce = 5f;
+    [Header("Wall")]
+    public bool isWallSliding;
+    public float wallSlidingSpeed = 4f;
+    [SerializeField] private Transform wallCheck;
+    [SerializeField] private LayerMask wallLayer;
     // Eigenschaften für den Zugriff auf private Felder
     public Rigidbody2D PlayerRb => rb;
     public Animator Anim => animator;
     public float HorizontalInput => horizontalInput;
+    public bool IsHangingOnLedge => isHangingOnLedge;
     private void Awake()
     {
         instance = this;
@@ -46,7 +73,12 @@ public class PlayerMovement : AnimatorBrain
 
     private void Update()
     {
-        Debug.Log(ledgeDetected);
+        if (isHangingOnLedge)
+        {
+            CheckForLedge();
+            return; // Wichtig: Early Return verhindert alle anderen Inputs während des Hängens
+        }
+
         // Spieler-Input einholen
         horizontalInput = Input.GetAxisRaw("Horizontal");
 
@@ -63,6 +95,8 @@ public class PlayerMovement : AnimatorBrain
         }
 
         CheckFallAndLandAnimations();
+        CheckForLedge();
+        WallState();
     }
 
     private void FixedUpdate()
@@ -71,13 +105,85 @@ public class PlayerMovement : AnimatorBrain
         currentState?.PhysicsUpdate();
     }
 
+    private void CheckForLedge()
+    {
+        if (ledgeDetected && canGrabLedge && !isHangingOnLedge)
+        {
+            canGrabLedge = false;
+            isHangingOnLedge = true;
+            hangPosition = ledgeGrab.position;
+
+            Play(Animations.CLIMB, 0, false, false);
+        }
+
+        if (isHangingOnLedge)
+        {
+            transform.position = hangPosition;
+
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                PerformLedgeJump();
+            }
+        }
+    }
+
+    public void WallState()
+    {
+        if (IsWalled() && !IsGrounded() && rb.velocity.y < 0)
+        {
+            ChangeState(new WallSlideState(this));
+        }
+    }
+    private void PerformLedgeJump()
+    {
+        isHangingOnLedge = false;
+        rb.simulated = true;
+        rb.gravityScale = 1f;
+
+        Vector2 horizontalOffset = new Vector2(isFacingRight ? -0.2f : 0.2f, 0f);
+        transform.position = (Vector2)transform.position + horizontalOffset;
+
+        // Kraftvollen Jump ausführen
+        Vector2 jumpForce = new Vector2(isFacingRight ? -ledgeJumpHorizontalForce : ledgeJumpHorizontalForce, ledgeJumpForce);
+        rb.velocity = jumpForce;
+        Play(Animations.JUMP, 0, false, false);
+        StartCoroutine(ResetLedgeGrab(0.5f));
+
+        // Ledge-Status zurücksetzen
+        ledgeDetected = false;
+    }
+
+    private IEnumerator ResetLedgeGrab(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        canGrabLedge = true;
+    }
+
     public virtual bool IsGrounded()
     {
         return Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
     }
+    
+    public virtual bool IsWalled()
+    {
+        return Physics2D.OverlapCircle(wallCheck.position,0.2f, wallLayer);
+    }
+    public bool IsTouchingWall()
+    {
+        // dein eigener Wand-Raycast oder Collider check
+        return IsWalled() && !IsGrounded(); // falls du sowas wie `isWalled` hast
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(wallCheck.position, 0.2f);
+    }
 
     public virtual void ChangeState(PlayerState newState)
     {
+        if (isHangingOnLedge) return;
+
         // Alten Zustand beenden und neuen Zustand starten
         currentState?.Exit();
         currentState = newState;
@@ -97,6 +203,8 @@ public class PlayerMovement : AnimatorBrain
 
     private void CheckMovementAnimations(int layer)
     {
+        if (isHangingOnLedge) return;
+
         if (playerScript != null && playerScript.isDead)
         {
             animator.SetTrigger("isDead");
@@ -122,7 +230,6 @@ public class PlayerMovement : AnimatorBrain
             Play(Animations.IDLE, layer, false, false);
         }
     }
-
 
     private void CheckFallAndLandAnimations()
     {
