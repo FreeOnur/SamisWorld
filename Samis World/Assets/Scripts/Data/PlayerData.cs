@@ -23,6 +23,7 @@ public class PlayerData : ScriptableObject
     public float JumpPower => jumpPower;
     [Space(5)]
     [Header("Attributes")]
-    public float health = 100f;
-    public float currentHealth = 0;
+    public float maxHealth = 100f;
+
+    public float wallJumpHorizontalForce = 5f;
 }
