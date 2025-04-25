@@ -262,6 +262,7 @@ public class PlayerMovement : AnimatorBrain
 
     public void SpawnDust(Vector3 position, bool facingRight)
     {
+        if (playerScript.currentSkill <= 0) return;
         if (dustPrefab != null)
         {
             GameObject dust = Instantiate(dustPrefab, position, Quaternion.identity);

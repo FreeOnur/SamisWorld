@@ -10,6 +10,8 @@ public class DashState : PlayerState
     public DashState(PlayerMovement player) : base(player) { }
     public override void Enter()
     {
+        playerScript.UseSkill(10);
+        if (playerScript.currentSkill <= 0) return;
         dashTime = dashDuration;
         isDashing = true;
         bool facingRight = player.transform.localScale.x > 0;
