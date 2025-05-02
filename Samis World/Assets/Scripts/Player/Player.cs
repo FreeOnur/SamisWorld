@@ -5,7 +5,9 @@ using UnityEngine;
 public class Player : PlayerMovement
 {
     [SerializeField] private float currentHealth;
+    public float currentSkill;
     public HealthBar healthBar;
+    public SkillBar skillBar;
     public Animator animator;
     public bool isDead = false;
     void Start()
@@ -13,6 +15,10 @@ public class Player : PlayerMovement
         Initialize(GetComponent<Animator>().layerCount, Animations.IDLE, GetComponent<Animator>(), DefaultAnimation);
         currentHealth = playerData.maxHealth;
         healthBar.SetMaxHealth(playerData.maxHealth);
+
+        currentSkill = playerData.maxSkill;
+        skillBar.SetMaxSkill(playerData.maxSkill);
+
     }
     void Update()
     {
@@ -20,6 +26,11 @@ public class Player : PlayerMovement
         if (Input.GetKeyDown(KeyCode.L))
         {
             TakeDamage(20);
+        }
+
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            UseSkill(10);
         }
     }
 
@@ -31,6 +42,13 @@ public class Player : PlayerMovement
         {
             Die();
         }
+    }
+
+    public void UseSkill(float amount)
+    {
+        currentSkill -= amount;
+        if (currentSkill < 0) currentSkill = 0;
+        skillBar.SetSkill(currentSkill);
     }
 
     void Die()

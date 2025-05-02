@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class SkillBar : MonoBehaviour
 {
     public Slider slider;
-    public void SetMaxHealth(float skill)
+    public void SetMaxSkill(float skill)
     {
         slider.maxValue = skill;
         slider.value = skill;
