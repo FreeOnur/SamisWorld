@@ -4,19 +4,19 @@ using UnityEngine;
 
 public class EnemyAttack : MonoBehaviour
 {
-    [SerializeField] private float attackRange;
-    [SerializeField] private float attackCooldown;
+    [SerializeField] protected float attackRange;
+    [SerializeField] protected float attackCooldown;
     private float lastAttackTime;
-    [SerializeField] private float damageAmount;
+    [SerializeField] protected float damageAmount;
 
-    [SerializeField] private Transform attackTransform;
-    [SerializeField] private LayerMask playerLayerMask;
+    [SerializeField] protected Transform attackTransform;
+    [SerializeField] protected LayerMask playerLayerMask;
     private Collider2D hit;
     void Start()
     {
         
     }
-    public void TryAttack()
+    public virtual void TryAttack()
     {
         if (Time.time - lastAttackTime >= attackCooldown)
         {
@@ -24,7 +24,7 @@ public class EnemyAttack : MonoBehaviour
             lastAttackTime = Time.time;
         }
     }
-    private void Attack()
+    protected virtual void Attack()
     {
         hit = Physics2D.OverlapCircle(transform.position, attackRange, playerLayerMask);
 

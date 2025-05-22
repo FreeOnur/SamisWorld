@@ -19,7 +19,7 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] private float jumpForce = 10f;
     Seeker seeker;
     Rigidbody2D rb;
-    void Start()
+    protected virtual void Start()
     {
         seeker = GetComponent<Seeker>();  
         rb = GetComponent<Rigidbody2D>();
@@ -31,7 +31,7 @@ public class EnemyAI : MonoBehaviour
     {
         return Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
     }
-    void UpdatePath()
+    protected virtual void UpdatePath()
     {
         if (target != null && seeker.IsDone())
         {
@@ -40,7 +40,7 @@ public class EnemyAI : MonoBehaviour
 
     }
 
-    void OnPathComplete(Path p)
+    protected virtual void OnPathComplete(Path p)
     {
         if (!p.error)
         {
@@ -51,7 +51,7 @@ public class EnemyAI : MonoBehaviour
     }
 
     // Update is called once per frame
-    void FixedUpdate()
+    protected virtual void FixedUpdate()
     {
         if (path == null || target == null) return;
 
