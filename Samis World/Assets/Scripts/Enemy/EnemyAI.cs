@@ -14,10 +14,12 @@ public class EnemyAI : MonoBehaviour
     Path path;
     bool reachedEndOfPath = false;
     [SerializeField] float stopDistance = 2f;
-
+    [SerializeField] private Transform groundCheck;
+    [SerializeField] private LayerMask groundLayer;
+    [SerializeField] private float jumpForce = 10f;
     Seeker seeker;
     Rigidbody2D rb;
-    void Start()
+    protected virtual void Start()
     {
         seeker = GetComponent<Seeker>();  
         rb = GetComponent<Rigidbody2D>();
@@ -25,16 +27,20 @@ public class EnemyAI : MonoBehaviour
         InvokeRepeating("UpdatePath", 0f, 1f);
 
     }
-
-    void UpdatePath()
+    bool IsGrounded()
+    {
+        return Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
+    }
+    protected virtual void UpdatePath()
     {
         if (target != null && seeker.IsDone())
         {
             seeker.StartPath(rb.position, target.position, OnPathComplete);
         }
+
     }
 
-    void OnPathComplete(Path p)
+    protected virtual void OnPathComplete(Path p)
     {
         if (!p.error)
         {
@@ -45,7 +51,7 @@ public class EnemyAI : MonoBehaviour
     }
 
     // Update is called once per frame
-    void FixedUpdate()
+    protected virtual void FixedUpdate()
     {
         if (path == null || target == null) return;
 
@@ -69,7 +75,14 @@ public class EnemyAI : MonoBehaviour
         }
 
         Vector2 direction = ((Vector2)path.vectorPath[currentWayPoint] - rb.position).normalized;
-        rb.velocity = direction * speed * Time.deltaTime;
+        Vector2 horizontalDirection = new Vector2(direction.x, 0).normalized;
+        rb.velocity = new Vector2(horizontalDirection.x * speed * Time.deltaTime, rb.velocity.y);
+
+        if (direction.y > 0.5f && IsGrounded())
+        {
+            rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+        }
+
 
         float distance = Vector2.Distance(rb.position, path.vectorPath[currentWayPoint]);
         if (distance < nextWaypointDistance)
@@ -77,5 +90,6 @@ public class EnemyAI : MonoBehaviour
             currentWayPoint++;
         }
     }
+
 
 }

@@ -8,7 +8,7 @@ public class EnemyHealth : MonoBehaviour, IDamagable
 
     private float currentHealth;
 
-    public void Damage(float damageAmount)
+    public virtual void Damage(float damageAmount)
     {
         currentHealth -= damageAmount;
         if (currentHealth <= 0)
