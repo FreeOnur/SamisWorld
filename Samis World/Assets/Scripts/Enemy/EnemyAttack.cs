@@ -4,18 +4,21 @@ using UnityEngine;
 
 public class EnemyAttack : MonoBehaviour
 {
-    [SerializeField] protected float attackRange;
-    [SerializeField] protected float attackCooldown;
+    [SerializeField] protected float attackRange = 1f;
+    [SerializeField] protected float attackCooldown = 2f;
     private float lastAttackTime;
-    [SerializeField] protected float damageAmount;
+    [SerializeField] protected float damageAmount = 10f;
 
-    [SerializeField] protected Transform attackTransform;
+    [SerializeField] protected Transform attackTransform; // z.B. leerer GameObject vor dem Gegner
     [SerializeField] protected LayerMask playerLayerMask;
+
     private Collider2D hit;
-    void Start()
+
+    void Update()
     {
-        
+        TryAttack();
     }
+
     public virtual void TryAttack()
     {
         if (Time.time - lastAttackTime >= attackCooldown)
@@ -24,11 +27,13 @@ public class EnemyAttack : MonoBehaviour
             lastAttackTime = Time.time;
         }
     }
+
     protected virtual void Attack()
     {
-        hit = Physics2D.OverlapCircle(transform.position, attackRange, playerLayerMask);
+        // Jetzt wird vom Attack Point geprüft
+        hit = Physics2D.OverlapCircle(attackTransform.position, attackRange, playerLayerMask);
 
-        if(hit != null)
+        if (hit != null)
         {
             IDamagable iDamagable = hit.GetComponent<IDamagable>();
 
@@ -37,11 +42,15 @@ public class EnemyAttack : MonoBehaviour
                 iDamagable.Damage(damageAmount);
             }
         }
-        
     }
-    // Update is called once per frame
-    void Update()
+
+    private void OnDrawGizmosSelected()
     {
-        TryAttack();
+        // Damit du im Editor sehen kannst, wo der Attack Point wirkt
+        if (attackTransform != null)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(attackTransform.position, attackRange);
+        }
     }
 }

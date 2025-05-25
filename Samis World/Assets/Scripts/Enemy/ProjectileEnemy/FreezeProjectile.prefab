@@ -13,7 +13,8 @@ GameObject:
   - component: {fileID: 656872937629438795}
   - component: {fileID: 5120257023070783526}
   - component: {fileID: 2540291091341262773}
-  m_Layer: 0
+  - component: {fileID: 8254250801844802484}
+  m_Layer: 6
   m_Name: FreezeProjectile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -95,7 +96,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 791156401417967742}
-  m_BodyType: 0
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -163,4 +164,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damage: 1
   lifetime: 5
-  freezeDuration: 16.09
+  freezeDuration: 3
+  freezeParticle: {fileID: 0}
+  currentHealth: 1
+--- !u!114 &8254250801844802484
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 791156401417967742}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26f342893621ec34b814a1b069c47f6f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damage: 1
+  lifetime: 5
+  freezeDuration: 3
+  freezeParticle: {fileID: 0}
+  currentHealth: 1

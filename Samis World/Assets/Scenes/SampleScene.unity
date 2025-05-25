@@ -1792,9 +1792,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   attackRange: 20
-  attackCooldown: 2
+  attackCooldown: 3.5
   damageAmount: 10
-  attackTransform: {fileID: 0}
+  attackTransform: {fileID: 1715680799}
   playerLayerMask:
     serializedVersion: 2
     m_Bits: 256
@@ -7557,9 +7557,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 840860352}
-  speed: 200
-  nextWaypointDistance: 3.04
-  stopDistance: 3
+  speed: 250
+  nextWaypointDistance: 2
+  stopDistance: 2
   groundCheck: {fileID: 177993749}
   groundLayer:
     serializedVersion: 2
@@ -7605,7 +7605,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7f652bdcfa17ae4cb1c80a6bee57120, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackRange: 2.6
+  attackRange: 1
   attackCooldown: 1.3
   damageAmount: 10
   attackTransform: {fileID: 1558041973}

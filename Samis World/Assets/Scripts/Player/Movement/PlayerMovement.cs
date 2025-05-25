@@ -205,12 +205,12 @@ public class PlayerMovement : AnimatorBrain
     {
         if (isHangingOnLedge) return;
 
-        if (playerScript != null && playerScript.isDead)
-        {
-            animator.SetTrigger("isDead");
-            this.enabled = false;
-            return; // Verhindert, dass andere Animationen abgespielt werden
-        }
+        //if (playerScript != null && playerScript.isDead)
+        //{
+        //    animator.SetTrigger("isDead");
+        //    this.enabled = false;
+        //    return; // Verhindert, dass andere Animationen abgespielt werden
+        //}
 
         if (isPlayingLandingAnimation) return;
 

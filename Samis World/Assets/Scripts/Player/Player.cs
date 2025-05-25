@@ -55,6 +55,8 @@ public class Player : PlayerMovement, IDamagable
     {
         if (isDead) return; // Prevent multiple calls
         isDead = true;
+        animator.SetTrigger("isDead");
+        GetComponent<PlayerMovement>().enabled = false;
     }
 
 }
