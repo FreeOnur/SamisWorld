@@ -1566,9 +1566,9 @@ GameObject:
   - component: {fileID: 1036550512}
   - component: {fileID: 1036550511}
   - component: {fileID: 1036550510}
-  - component: {fileID: 1036550516}
   - component: {fileID: 1036550515}
   - component: {fileID: 1036550517}
+  - component: {fileID: 1036550518}
   m_Layer: 6
   m_Name: Enemy (1)
   m_TagString: Enemy
@@ -1758,7 +1758,44 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 3
---- !u!114 &1036550516
+--- !u!114 &1036550517
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1036550506}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50e2020830347dc40a7d8dd67962e603, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 200
+  nextWaypointDistance: 2
+  stopDistance: 2
+  jumpForce: 10
+  detectionRange: 5
+  groundCheck: {fileID: 963610571}
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 136
+  attackRange: 8
+  attackCooldown: 2
+  damageAmount: 10
+  playerLayerMask:
+    serializedVersion: 2
+    m_Bits: 256
+  target: {fileID: 0}
+  seeker: {fileID: 0}
+  rb: {fileID: 0}
+  currentWayPoint: 0
+  reachedEndOfPath: 0
+  lastAttackTime: 0
+  facingDirection: 1
+  projectilePrefab: {fileID: 791156401417967742, guid: a41fe54f7ac268f41b55a412312e4321, type: 3}
+  firePoint: {fileID: 1715680799}
+  projectileSpeed: 5
+--- !u!114 &1036550518
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1772,35 +1809,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 840860352}
   speed: 200
-  nextWaypointDistance: 2
-  stopDistance: 10
+  nextWaypointDistance: 8
+  stopDistance: 8
   groundCheck: {fileID: 963610571}
   groundLayer:
     serializedVersion: 2
     m_Bits: 136
   jumpForce: 10
---- !u!114 &1036550517
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1036550506}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6502c9f0345f9f042b039269e1e6b45a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  attackRange: 20
-  attackCooldown: 3.5
-  damageAmount: 10
-  attackTransform: {fileID: 1715680799}
-  playerLayerMask:
-    serializedVersion: 2
-    m_Bits: 256
-  projectilePrefab: {fileID: 791156401417967742, guid: a41fe54f7ac268f41b55a412312e4321, type: 3}
-  firePoint: {fileID: 1715680799}
-  projectileSpeed: 5
 --- !u!1 &1134452831
 GameObject:
   m_ObjectHideFlags: 0
@@ -7381,7 +7396,6 @@ GameObject:
   - component: {fileID: 1948904507}
   - component: {fileID: 1948904510}
   - component: {fileID: 1948904512}
-  - component: {fileID: 1948904511}
   - component: {fileID: 1948904513}
   m_Layer: 6
   m_Name: Enemy
@@ -7544,27 +7558,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 3
---- !u!114 &1948904511
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1948904503}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: df89b06275c8964409a9117b0652e9a2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  target: {fileID: 840860352}
-  speed: 250
-  nextWaypointDistance: 2
-  stopDistance: 2
-  groundCheck: {fileID: 177993749}
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 136
-  jumpForce: 10
 --- !u!114 &1948904512
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7602,16 +7595,32 @@ MonoBehaviour:
   m_GameObject: {fileID: 1948904503}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f7f652bdcfa17ae4cb1c80a6bee57120, type: 3}
+  m_Script: {fileID: 11500000, guid: 8079a67494833bf45872a0f3ed5f74bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackRange: 1
-  attackCooldown: 1.3
+  speed: 200
+  nextWaypointDistance: 2
+  stopDistance: 2
+  jumpForce: 10
+  detectionRange: 100
+  groundCheck: {fileID: 177993749}
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 136
+  attackRange: 2
+  attackCooldown: 2
   damageAmount: 10
-  attackTransform: {fileID: 1558041973}
   playerLayerMask:
     serializedVersion: 2
     m_Bits: 256
+  target: {fileID: 0}
+  seeker: {fileID: 0}
+  rb: {fileID: 0}
+  currentWayPoint: 0
+  reachedEndOfPath: 0
+  lastAttackTime: 0
+  facingDirection: 1
+  attackTransform: {fileID: 1558041973}
 --- !u!1 &2137885720
 GameObject:
   m_ObjectHideFlags: 0
