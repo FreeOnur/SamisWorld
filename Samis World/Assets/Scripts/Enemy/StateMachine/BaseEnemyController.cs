@@ -29,12 +29,22 @@ public abstract class BaseEnemyController : MonoBehaviour
     [HideInInspector] public bool reachedEndOfPath = false;
     [HideInInspector] public float lastAttackTime;
     [HideInInspector] public float facingDirection = 1f;
+    public Transform dodgeCheckPoint;
+    public Vector2 dodgeAngle;
+    public float dodgeForce;
+    public float dodgeDetectDistance;
+    public float dodgeCooldown;
+    public float dodgeChance = 0.5f; // 50% Chance
+    [HideInInspector] public float lastDodgeTime;
+
+
 
     // State Machine
     protected EnemyStateMachine stateMachine;
     [HideInInspector] public EnemyIdleState idleState;
     [HideInInspector] public EnemyChaseState chaseState;
     [HideInInspector] public EnemyAttackState attackState;
+    [HideInInspector] public EnemyDodgeState dodgeState;
 
     protected virtual void Awake()
     {
@@ -58,6 +68,7 @@ public abstract class BaseEnemyController : MonoBehaviour
         attackState = CreateAttackState();
         idleState = new EnemyIdleState(stateMachine, this);
         chaseState = new EnemyChaseState(stateMachine, this);
+        dodgeState = new EnemyDodgeState(stateMachine, this);
 
         // Debug state creation
         Debug.Log($"States created - Attack: {attackState != null}, Idle: {idleState != null}, Chase: {chaseState != null}");
@@ -125,6 +136,30 @@ public abstract class BaseEnemyController : MonoBehaviour
     {
         if (target == null) return float.MaxValue;
         return Vector2.Distance(transform.position, target.position);
+    }
+
+    public bool CheckIfDodge()
+    {
+        // Prüfe den Cooldown
+        if (Time.time < lastDodgeTime + dodgeCooldown)
+        {
+            return false;
+        }
+
+        // Raycast zum Spieler
+        RaycastHit2D hitPlayer = Physics2D.Raycast(dodgeCheckPoint.position, facingDirection == 1 ? Vector2.right : Vector2.left, dodgeDetectDistance, playerLayerMask);
+        // Prüfe, ob der Spieler aggressiv ist
+        bool isPlayerAggressive = facingDirection > 0 && Input.GetAxis("Horizontal") < 0 || facingDirection < 0 && Input.GetAxis("Horizontal") > 0;
+
+        // Wenn Raycast trifft und Spieler aggressiv ist, prüfe die Wahrscheinlichkeit
+        if (hitPlayer && isPlayerAggressive)
+        {
+            bool shouldDodge = Random.value < dodgeChance;
+            Debug.Log($"Dodge Chance Check: {shouldDodge} (Chance: {dodgeChance * 100}%)");
+            return shouldDodge;
+        }
+
+        return false;
     }
 
     public bool CanAttack()

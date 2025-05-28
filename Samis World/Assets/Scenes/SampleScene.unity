@@ -1792,6 +1792,13 @@ MonoBehaviour:
   reachedEndOfPath: 0
   lastAttackTime: 0
   facingDirection: 1
+  dodgeCheckPoint: {fileID: 0}
+  dodgeAngle: {x: 0, y: 0}
+  dodgeForce: 0
+  dodgeDetectDistance: 0
+  dodgeCooldown: 0
+  dodgeChance: 0.5
+  lastDodgeTime: 0
   projectilePrefab: {fileID: 791156401417967742, guid: a41fe54f7ac268f41b55a412312e4321, type: 3}
   firePoint: {fileID: 1715680799}
   projectileSpeed: 5
@@ -7620,6 +7627,13 @@ MonoBehaviour:
   reachedEndOfPath: 0
   lastAttackTime: 0
   facingDirection: 1
+  dodgeCheckPoint: {fileID: 1558041973}
+  dodgeAngle: {x: 2, y: 2}
+  dodgeForce: 9
+  dodgeDetectDistance: 1
+  dodgeCooldown: 3
+  dodgeChance: 0.7
+  lastDodgeTime: 0
   attackTransform: {fileID: 1558041973}
 --- !u!1 &2137885720
 GameObject:

@@ -28,6 +28,11 @@ public class EnemyIdleState : EnemyState
                 Debug.Log("Switching to Chase State from Idle");
                 stateMachine.ChangeState(enemy.chaseState);
             }
+
+            if (enemy.CheckIfDodge())
+            {
+                stateMachine.ChangeState(enemy.dodgeState);
+            }
         }
     }
 }

@@ -37,6 +37,10 @@ public abstract class EnemyAttackState : EnemyState
             {
                 stateMachine.ChangeState(enemy.idleState);
             }
+            if (enemy.CheckIfDodge())
+            {
+                stateMachine.ChangeState(enemy.dodgeState);
+            }
         }
     }
 

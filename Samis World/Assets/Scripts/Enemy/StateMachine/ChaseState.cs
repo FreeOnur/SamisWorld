@@ -21,6 +21,10 @@ public class EnemyChaseState : EnemyState
             stateMachine.ChangeState(enemy.attackState);
             return;
         }
+        else if (enemy.CheckIfDodge())
+        {
+            stateMachine.ChangeState(enemy.dodgeState);
+        }
     }
     public override void FixedUpdate()
     {
