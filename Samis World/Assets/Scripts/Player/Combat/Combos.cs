@@ -71,7 +71,6 @@ public class Combos : MonoBehaviour
         animator.ResetTrigger("3");
     }
 
-
     void Start()
     {
         combo = 0;
