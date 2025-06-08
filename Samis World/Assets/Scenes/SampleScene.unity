@@ -434,6 +434,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1948904506}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &290723924
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 290723925}
+  m_Layer: 8
+  m_Name: ProjectileAttackpoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &290723925
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 290723924}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 840860352}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &342722431
 GameObject:
   m_ObjectHideFlags: 0
@@ -816,6 +847,7 @@ GameObject:
   - component: {fileID: 840860357}
   - component: {fileID: 840860359}
   - component: {fileID: 840860360}
+  - component: {fileID: 840860361}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -921,6 +953,7 @@ Transform:
   - {fileID: 923294620}
   - {fileID: 1243971441}
   - {fileID: 1669434345}
+  - {fileID: 290723925}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &840860353
@@ -1096,12 +1129,27 @@ MonoBehaviour:
   combo: 0
   isAttacking: 0
   playerScript: {fileID: 840860359}
+  useSwordRun: 0
+  swordRunDuration: 20
   attackTransform: {fileID: 1839607056}
   attackRange: 1.2
   attackLayer:
     serializedVersion: 2
     m_Bits: 64
   damageAmount: 1
+--- !u!114 &840860361
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 840860348}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0893354bab8fe14c90220ac2620233d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  debugMode: 1
 --- !u!1 &852352171
 GameObject:
   m_ObjectHideFlags: 0

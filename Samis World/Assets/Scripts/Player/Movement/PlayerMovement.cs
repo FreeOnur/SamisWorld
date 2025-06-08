@@ -5,8 +5,6 @@ using UnityEngine;
 
 public class PlayerMovement : AnimatorBrain
 {
-    // Existierende Variablen bleiben unverändert
-
     [SerializeField] private Transform groundCheck;
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private GameObject dustPrefab;
@@ -20,9 +18,11 @@ public class PlayerMovement : AnimatorBrain
     private float horizontalInput;
     private bool isFacingRight = true;
     private bool wasGrounded = true;
+
     [Header("Animation Info")]
     private bool isPlayingLandingAnimation = false;
     private float landingAnimationDuration = 0.05f;
+
     [Header("Jump Info")]
     public bool isJumping;
     public float jumpHangTimeThreshold = 4f;
@@ -34,7 +34,6 @@ public class PlayerMovement : AnimatorBrain
 
     [Header("Ledge Info")]
     [SerializeField] private Vector2 offset1;
-
     private Vector2 climbBegunPosition;
     private bool canGrabLedge = true;
     private bool canClimb;
@@ -44,20 +43,22 @@ public class PlayerMovement : AnimatorBrain
     Vector2 hangPosition;
     Vector2 ledgePos;
 
-    // Neue Variable für Ledge-Jump-Kraft
     [Header("Ledge Jump Info")]
     [SerializeField] private float ledgeJumpForce = 12f;
     [SerializeField] private float ledgeJumpHorizontalForce = 5f;
+
     [Header("Wall")]
     public bool isWallSliding;
     public float wallSlidingSpeed = 4f;
     [SerializeField] private Transform wallCheck;
     [SerializeField] private LayerMask wallLayer;
+
     // Eigenschaften für den Zugriff auf private Felder
     public Rigidbody2D PlayerRb => rb;
     public Animator Anim => animator;
     public float HorizontalInput => horizontalInput;
     public bool IsHangingOnLedge => isHangingOnLedge;
+
     private void Awake()
     {
         instance = this;
@@ -76,20 +77,15 @@ public class PlayerMovement : AnimatorBrain
         if (isHangingOnLedge)
         {
             CheckForLedge();
-            return; // Wichtig: Early Return verhindert alle anderen Inputs während des Hängens
+            return;
         }
 
-        // Spieler-Input einholen
         horizontalInput = Input.GetAxisRaw("Horizontal");
-
-        // Aktuellen Zustand behandeln
         currentState?.HandleInput();
-
-        // Spieler drehen, wenn nötig
         Flip();
 
-        // Bewegung und Animation prüfen
-        if (!(currentState is DashState)) // DashState soll Animationen exklusiv steuern
+        // WICHTIG: Nur Animationen checken wenn nicht attackiert wird
+        if (!(currentState is DashState) && !GetComponent<Combos>().isAttacking)
         {
             CheckMovementAnimations(0);
         }
@@ -101,7 +97,6 @@ public class PlayerMovement : AnimatorBrain
 
     private void FixedUpdate()
     {
-        // Physik-Updates des aktuellen Zustands
         currentState?.PhysicsUpdate();
     }
 
@@ -112,14 +107,12 @@ public class PlayerMovement : AnimatorBrain
             canGrabLedge = false;
             isHangingOnLedge = true;
             hangPosition = ledgeGrab.position;
-
             Play(Animations.CLIMB, 0, false, false);
         }
 
         if (isHangingOnLedge)
         {
             transform.position = hangPosition;
-
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 PerformLedgeJump();
@@ -134,6 +127,7 @@ public class PlayerMovement : AnimatorBrain
             ChangeState(new WallSlideState(this));
         }
     }
+
     private void PerformLedgeJump()
     {
         isHangingOnLedge = false;
@@ -143,13 +137,10 @@ public class PlayerMovement : AnimatorBrain
         Vector2 horizontalOffset = new Vector2(isFacingRight ? -0.2f : 0.2f, 0f);
         transform.position = (Vector2)transform.position + horizontalOffset;
 
-        // Kraftvollen Jump ausführen
         Vector2 jumpForce = new Vector2(isFacingRight ? -ledgeJumpHorizontalForce : ledgeJumpHorizontalForce, ledgeJumpForce);
         rb.velocity = jumpForce;
         Play(Animations.JUMP, 0, false, false);
         StartCoroutine(ResetLedgeGrab(0.5f));
-
-        // Ledge-Status zurücksetzen
         ledgeDetected = false;
     }
 
@@ -163,15 +154,15 @@ public class PlayerMovement : AnimatorBrain
     {
         return Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
     }
-    
+
     public virtual bool IsWalled()
     {
-        return Physics2D.OverlapCircle(wallCheck.position,0.2f, wallLayer);
+        return Physics2D.OverlapCircle(wallCheck.position, 0.2f, wallLayer);
     }
+
     public bool IsTouchingWall()
     {
-        // dein eigener Wand-Raycast oder Collider check
-        return IsWalled() && !IsGrounded(); // falls du sowas wie `isWalled` hast
+        return IsWalled() && !IsGrounded();
     }
 
     private void OnDrawGizmosSelected()
@@ -183,8 +174,6 @@ public class PlayerMovement : AnimatorBrain
     public virtual void ChangeState(PlayerState newState)
     {
         if (isHangingOnLedge) return;
-
-        // Alten Zustand beenden und neuen Zustand starten
         currentState?.Exit();
         currentState = newState;
         currentState?.Enter();
@@ -204,15 +193,10 @@ public class PlayerMovement : AnimatorBrain
     private void CheckMovementAnimations(int layer)
     {
         if (isHangingOnLedge) return;
-
-        //if (playerScript != null && playerScript.isDead)
-        //{
-        //    animator.SetTrigger("isDead");
-        //    this.enabled = false;
-        //    return; // Verhindert, dass andere Animationen abgespielt werden
-        //}
-
         if (isPlayingLandingAnimation) return;
+
+        // WICHTIG: Nicht überschreiben wenn gerade attackiert wird
+        if (GetComponent<Combos>().isAttacking) return;
 
         if (!IsGrounded())
         {
@@ -223,12 +207,31 @@ public class PlayerMovement : AnimatorBrain
         }
         else if (Mathf.Abs(rb.velocity.x) > 0.1f && Mathf.Abs(horizontalInput) > 0.1f)
         {
-            Play(Animations.RUN, layer, false, false);
+            bool shouldUseSwordRun = IsUsingSwordRun();
+
+            if (shouldUseSwordRun)
+            {
+                Play(Animations.RUN_SWORD, layer, false, false);
+            }
+            else
+            {
+                Play(Animations.RUN, layer, false, false);
+            }
         }
         else
         {
-            Play(Animations.IDLE, layer, false, false);
+            // Nur IDLE wenn nicht useSwordRun aktiv ist
+            if (!IsUsingSwordRun())
+            {
+                Play(Animations.IDLE, layer, false, false);
+            }
+            else
+            {
+                Play(Animations.RUN_SWORD, layer, false, false);
+            }
         }
+
+        Debug.Log($"Velocity: {rb.velocity.x}, Input: {horizontalInput}, SwordRun: {IsUsingSwordRun()}, CurrentState: {animator.GetCurrentAnimatorStateInfo(layer).IsName("Run_Sword")}");
     }
 
     private void CheckFallAndLandAnimations()
@@ -249,15 +252,18 @@ public class PlayerMovement : AnimatorBrain
 
     private IEnumerator PlayLandingAnimation()
     {
-        if (playerScript != null && playerScript.isDead) yield break; // Don't play landing animation if dead
+        if (playerScript != null && playerScript.isDead) yield break;
 
         isPlayingLandingAnimation = true;
-        Play(Animations.JUMPEND, 0, true, true); // Play landing animation
-
+        Play(Animations.JUMPEND, 0, true, true);
         yield return new WaitForSeconds(landingAnimationDuration);
-
         isPlayingLandingAnimation = false;
-        SetLocked(false, 0); // Unlock animation
+        SetLocked(false, 0);
+    }
+
+    public bool IsUsingSwordRun()
+    {
+        return GetComponent<Combos>().useSwordRun;
     }
 
     public void SpawnDust(Vector3 position, bool facingRight)
@@ -275,6 +281,16 @@ public class PlayerMovement : AnimatorBrain
 
     public void DefaultAnimation(int layer)
     {
-        CheckMovementAnimations(0);
+        // WICHTIG: DefaultAnimation komplett deaktivieren wenn useSwordRun aktiv ist
+        if (!GetComponent<Combos>().isAttacking && !IsUsingSwordRun())
+        {
+            CheckMovementAnimations(0);
+        }
+        else if (IsUsingSwordRun())
+        {
+            // Sword Run forcieren auch in DefaultAnimation
+            animator.SetBool("useSwordRun", true);
+            animator.Play("Run_Sword", layer, 0f);
+        }
     }
 }

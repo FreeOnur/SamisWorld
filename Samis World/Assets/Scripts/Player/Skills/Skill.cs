@@ -1,37 +1,13 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class Skill : MonoBehaviour
+[CreateAssetMenu(fileName = "New Skill", menuName = "Skills/Skill")]
+public class SkillDefinition : ScriptableObject
 {
     public string skillName;
-    public int skillID;
-    public int skillLevel;
-    public int skillMaxLevel;
-    public bool isUnlocked;
+    public string description;
+    public Sprite icon;
+    public SkillType type;
+    public float value;
 
-    public Skill(string name, int id, int maxLevel)
-    {
-        skillName = name;
-        skillID = id;
-        skillLevel = 0;
-        skillMaxLevel = maxLevel;
-        isUnlocked = false;
-    }
-
-    public void LevelUp ()
-    {
-        if (skillLevel < skillMaxLevel)
-        {
-            skillLevel++;
-            if (skillLevel == 1)
-            {
-                isUnlocked = true;
-            }
-        } else
-        {
-            Debug.Log("Max level erreicht");
-        }
-    }
-
+    public enum SkillType { Passive, Active }
 }
