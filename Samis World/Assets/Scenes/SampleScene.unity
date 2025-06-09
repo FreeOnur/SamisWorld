@@ -1616,7 +1616,6 @@ GameObject:
   - component: {fileID: 1036550510}
   - component: {fileID: 1036550515}
   - component: {fileID: 1036550517}
-  - component: {fileID: 1036550518}
   m_Layer: 6
   m_Name: Enemy (1)
   m_TagString: Enemy
@@ -1822,7 +1821,7 @@ MonoBehaviour:
   nextWaypointDistance: 2
   stopDistance: 2
   jumpForce: 10
-  detectionRange: 5
+  detectionRange: 10
   groundCheck: {fileID: 963610571}
   groundLayer:
     serializedVersion: 2
@@ -1840,37 +1839,16 @@ MonoBehaviour:
   reachedEndOfPath: 0
   lastAttackTime: 0
   facingDirection: 1
-  dodgeCheckPoint: {fileID: 0}
-  dodgeAngle: {x: 0, y: 0}
-  dodgeForce: 0
-  dodgeDetectDistance: 0
-  dodgeCooldown: 0
-  dodgeChance: 0.5
+  dodgeCheckPoint: {fileID: 1715680799}
+  dodgeAngle: {x: 2, y: 2}
+  dodgeForce: 9
+  dodgeDetectDistance: 1
+  dodgeCooldown: 3
+  dodgeChance: 0.7
   lastDodgeTime: 0
   projectilePrefab: {fileID: 791156401417967742, guid: a41fe54f7ac268f41b55a412312e4321, type: 3}
   firePoint: {fileID: 1715680799}
   projectileSpeed: 5
---- !u!114 &1036550518
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1036550506}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: df89b06275c8964409a9117b0652e9a2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  target: {fileID: 840860352}
-  speed: 200
-  nextWaypointDistance: 8
-  stopDistance: 8
-  groundCheck: {fileID: 963610571}
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 136
-  jumpForce: 10
 --- !u!1 &1134452831
 GameObject:
   m_ObjectHideFlags: 0

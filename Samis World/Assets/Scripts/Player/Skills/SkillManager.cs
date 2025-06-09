@@ -6,7 +6,7 @@ public class SkillManager : MonoBehaviour
 {
     public List<SkillDefinition> allSkills;
     public List<SkillDefinition> chosenSkills = new List<SkillDefinition>();
-
+    public PlayerAttack playerAttack;
     public void ChooseRandomSkill(int count)
     {
         List<SkillDefinition> skillOptions = new List<SkillDefinition>();
@@ -31,7 +31,7 @@ public class SkillManager : MonoBehaviour
     {
         if (skill.skillName == "Fireball")
         {
-            // Fireball aktivieren
+            playerAttack.fireballUnlocked = true;
         }
         else if (skill.skillName == "Damage Up")
         {

@@ -5,6 +5,8 @@ using static UnityEngine.GraphicsBuffer;
 
 public class PlayerAttack : MonoBehaviour
 {
+    [Header("Skill Related Bools For Activation")]
+    public bool fireballUnlocked = false;
     [Header("Projectile Attack")]
     public GameObject projectilePrefab;
     public Transform firePoint;
@@ -14,9 +16,9 @@ public class PlayerAttack : MonoBehaviour
     {
         target = GetNearestEnemy();
     }
-    public void PerformProjectileAttack()
+    public void PerformFireballAttack()
     {
-        if (projectilePrefab == null || firePoint == null || target == null)
+        if (!fireballUnlocked || projectilePrefab == null || firePoint == null || target == null)
             return;
 
         Vector2 direction = (target.position - firePoint.position).normalized;

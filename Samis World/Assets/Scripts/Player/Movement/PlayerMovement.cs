@@ -221,7 +221,7 @@ public class PlayerMovement : AnimatorBrain
         else
         {
             // Nur IDLE wenn nicht useSwordRun aktiv ist
-            if (!IsUsingSwordRun())
+            if (Mathf.Abs(rb.velocity.x) < 0.1f && Mathf.Abs(horizontalInput) < 0.1f)
             {
                 Play(Animations.IDLE, layer, false, false);
             }
