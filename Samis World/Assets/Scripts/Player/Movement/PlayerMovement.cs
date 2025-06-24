@@ -53,11 +53,13 @@ public class PlayerMovement : AnimatorBrain
     [SerializeField] private Transform wallCheck;
     [SerializeField] private LayerMask wallLayer;
 
+    private AttributeManager attributeManager;
     // Eigenschaften für den Zugriff auf private Felder
     public Rigidbody2D PlayerRb => rb;
     public Animator Anim => animator;
     public float HorizontalInput => horizontalInput;
     public bool IsHangingOnLedge => isHangingOnLedge;
+    private bool jumpBoostApplied = false;
 
     private void Awake()
     {
@@ -69,6 +71,7 @@ public class PlayerMovement : AnimatorBrain
         Initialize(GetComponent<Animator>().layerCount, Animations.IDLE, GetComponent<Animator>(), DefaultAnimation);
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+        attributeManager = GetComponent<AttributeManager>();
         ChangeState(new IdleState(this));
     }
 
@@ -78,6 +81,18 @@ public class PlayerMovement : AnimatorBrain
         {
             CheckForLedge();
             return;
+        }
+        if (Input.GetKeyDown(KeyCode.K) && !jumpBoostApplied)
+        {
+            attributeManager.ChangeAttribute("jumpPower", ModifierType.Additive, 10f, "JumpBoost");
+            jumpBoostApplied = true;
+            playerData.PrintAllModifiers(); // Debug
+        }
+        else if (Input.GetKeyDown(KeyCode.L) && jumpBoostApplied)
+        {
+            playerData.RemoveModifiersBySource("JumpBoost");
+            jumpBoostApplied = false;
+            playerData.PrintAllModifiers(); // Debug
         }
 
         horizontalInput = Input.GetAxisRaw("Horizontal");
