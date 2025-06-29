@@ -13,6 +13,7 @@ public class PlayerMovement : AnimatorBrain
     private PlayerState currentState;
     private Rigidbody2D rb;
     private Animator animator;
+    public PlayerAttack playerAttack;
 
     [Header("Move Info")]
     private float horizontalInput;
@@ -73,6 +74,7 @@ public class PlayerMovement : AnimatorBrain
         animator = GetComponent<Animator>();
         attributeManager = GetComponent<AttributeManager>();
         ChangeState(new IdleState(this));
+        playerAttack = GetComponent<PlayerAttack>();
     }
 
     private void Update()

@@ -8,16 +8,35 @@ public class PlayerAttack : MonoBehaviour
 {
     [Header("Skill Related Bools For Activation")]
     public bool fireballUnlocked = true;
+    public bool strongHitUnlocked = true;
+    public bool doubleJumpUnlocked = true;
     [Header("Projectile Attack")]
     public GameObject projectilePrefab;
     public Transform firePoint;
     public float projectileSpeed = 5f;
     private Transform target;
+    [Header("Double Jump")]
+    public int maxJumpCount = 10;
+    public int jumpCountStart = 0;
+    [Header("Strong Attack")]
+    private bool isCharging = false;
+    private float chargeStartTime;
+    public float maxChargeTime = 3f;
+    public float maxDamageMultiplier = 3f;
+    public Transform attackPoint;
+    public LayerMask enemyLayers;
+    [SerializeField] private float attackRange = 2f;
+    [Header("Instances")]
     private EnemyHealth enemyHealth;
+    private Combos combos;
+    public PlayerData playerData;
+    private PlayerMovement player;
 
     void Start()
     {
         target = GetNearestEnemy();
+        combos = GetComponent<Combos>();
+        player = GetComponent<PlayerMovement>();
     }
     public void PerformFireballAttack()
     {
@@ -39,7 +58,39 @@ public class PlayerAttack : MonoBehaviour
         }
     }
 
+    public void PerformStrongAttack()
+    {
+        if (!strongHitUnlocked)
+            return;
 
+        if (Input.GetKeyDown(KeyCode.Mouse0))
+        {
+            isCharging = true;
+            chargeStartTime = Time.time;
+        }
+
+        if (Input.GetKeyUp(KeyCode.Mouse0) && isCharging)
+        {
+            isCharging = false;
+            float heldTime = Mathf.Clamp(Time.time - chargeStartTime, 0f, maxChargeTime);
+            float chargeRatio = heldTime / maxChargeTime;
+            float finalMultiplier = Mathf.Lerp(1f, maxDamageMultiplier, chargeRatio);
+
+            float baseDamage = combos.damageAmount;
+            float finalDamage = baseDamage * finalMultiplier;
+            Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
+            foreach (Collider2D enemy in hitEnemies)
+            {
+                EnemyHealth eh = enemy.GetComponent<EnemyHealth>();
+                if (eh != null)
+                {
+                    eh.Damage(finalDamage);
+                }
+            }
+
+            Debug.Log($"Strong Attack: {finalDamage} Damage to {hitEnemies.Length} enemies");
+        }
+    }
 
     private Transform GetNearestEnemy()
     {
@@ -56,7 +107,6 @@ public class PlayerAttack : MonoBehaviour
                 closest = enemy.transform;
             }
         }
-
         return closest;
     }
     // Update is called once per frame
@@ -66,5 +116,6 @@ public class PlayerAttack : MonoBehaviour
         {
             PerformFireballAttack();
         }
+        PerformStrongAttack();
     }
 }

@@ -33,7 +33,7 @@ public class SkillManager : MonoBehaviour
         {
             playerAttack.fireballUnlocked = true;
         }
-        else if (skill.skillName == "Damage Up")
+        else if (skill.skillName == "Starker Schlag")
         {
             // Damage erhöhen
         }

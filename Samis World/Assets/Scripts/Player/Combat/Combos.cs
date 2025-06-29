@@ -15,7 +15,7 @@ public class Combos : MonoBehaviour
     [SerializeField] private Transform attackTransform;
     [SerializeField] private float attackRange = 2f;
     [SerializeField] private LayerMask attackLayer;
-    [SerializeField] private float damageAmount = 1f;
+    public float damageAmount = 1f;
 
     public void Comboss()
     {

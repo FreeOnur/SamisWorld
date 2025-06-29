@@ -1844,6 +1844,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 6015197070929690720, guid: 8aceda4c01db3fb43acced3f389c79f0, type: 3}
+      propertyPath: playerData
+      value: 
+      objectReference: {fileID: 11400000, guid: 7cc6dce4d40e082499ba85ffffb6b57b, type: 2}
+    - target: {fileID: 6015197070929690720, guid: 8aceda4c01db3fb43acced3f389c79f0, type: 3}
+      propertyPath: enemyLayers.m_Bits
+      value: 64
+      objectReference: {fileID: 0}
     - target: {fileID: 8517979463484510949, guid: 8aceda4c01db3fb43acced3f389c79f0, type: 3}
       propertyPath: skillBar
       value: 
