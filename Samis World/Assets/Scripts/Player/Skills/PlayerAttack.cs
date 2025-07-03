@@ -7,9 +7,10 @@ using static UnityEngine.GraphicsBuffer;
 public class PlayerAttack : MonoBehaviour
 {
     [Header("Skill Related Bools For Activation")]
-    public bool fireballUnlocked = true;
-    public bool strongHitUnlocked = true;
-    public bool doubleJumpUnlocked = true;
+    public bool fireballUnlocked = false;
+    public bool strongHitUnlocked = false;
+    public bool doubleJumpUnlocked = false;
+    public bool bloodyDamageUnlocked = true;
     [Header("Projectile Attack")]
     public GameObject projectilePrefab;
     public Transform firePoint;
@@ -31,12 +32,16 @@ public class PlayerAttack : MonoBehaviour
     private Combos combos;
     public PlayerData playerData;
     private PlayerMovement player;
+    private Player playerScript;
+    public float originalDamage;
 
     void Start()
     {
         target = GetNearestEnemy();
         combos = GetComponent<Combos>();
         player = GetComponent<PlayerMovement>();
+        playerScript = GetComponent<Player>();
+        originalDamage = combos.damageAmount;
     }
     public void PerformFireballAttack()
     {
@@ -108,6 +113,33 @@ public class PlayerAttack : MonoBehaviour
             }
         }
         return closest;
+    }
+
+    public float GetDamage()
+    {
+        float healthPercentage = playerScript.CurrentHealth / playerData.maxHealth;
+        float damageMultiplier = 1;
+        int healthStage = Mathf.FloorToInt(healthPercentage * 4);
+        switch (healthStage)
+        {
+            case 0:  // 0-25% HP
+                damageMultiplier = 2.0f;
+                break;
+            case 1:  // 25-50% HP
+                damageMultiplier = 1.5f;
+                break;
+            case 2:  // 50-75% HP
+                damageMultiplier = 1.25f;
+                break;
+            case 3:  // 75-100% HP
+            default:
+                damageMultiplier = 1.0f;
+                break;
+        }
+        float finalDamage = originalDamage * damageMultiplier;
+        Debug.Log("Damage is " + finalDamage);
+        return finalDamage;
+
     }
     // Update is called once per frame
     void Update()

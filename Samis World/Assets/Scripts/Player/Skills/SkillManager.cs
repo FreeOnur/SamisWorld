@@ -35,7 +35,7 @@ public class SkillManager : MonoBehaviour
         }
         else if (skill.skillName == "Starker Schlag")
         {
-            // Damage erhöhen
+            
         }
         // usw.
     }

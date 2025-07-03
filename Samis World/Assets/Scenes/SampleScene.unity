@@ -440,6 +440,11 @@ Transform:
   - {fileID: 852352172}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &389805694 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 150832009531797596, guid: 8aceda4c01db3fb43acced3f389c79f0, type: 3}
+  m_PrefabInstance: {fileID: 3136178202381085074}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &469432704
 GameObject:
   m_ObjectHideFlags: 0
@@ -1783,6 +1788,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4468731171099209568, guid: d6251940ec9e39044895231d000e397f, type: 3}
+      propertyPath: maxHealth
+      value: 100
+      objectReference: {fileID: 0}
     - target: {fileID: 8602331695675854764, guid: d6251940ec9e39044895231d000e397f, type: 3}
       propertyPath: m_Name
       value: MeleeEnemy
@@ -1848,6 +1857,10 @@ PrefabInstance:
       propertyPath: playerData
       value: 
       objectReference: {fileID: 11400000, guid: 7cc6dce4d40e082499ba85ffffb6b57b, type: 2}
+    - target: {fileID: 6015197070929690720, guid: 8aceda4c01db3fb43acced3f389c79f0, type: 3}
+      propertyPath: attackPoint
+      value: 
+      objectReference: {fileID: 389805694}
     - target: {fileID: 6015197070929690720, guid: 8aceda4c01db3fb43acced3f389c79f0, type: 3}
       propertyPath: enemyLayers.m_Bits
       value: 64

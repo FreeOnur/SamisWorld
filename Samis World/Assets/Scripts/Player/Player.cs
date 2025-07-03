@@ -5,6 +5,7 @@ using UnityEngine;
 public class Player : PlayerMovement, IDamagable
 {
     [SerializeField] private float currentHealth;
+    public float CurrentHealth => currentHealth;
     public float currentSkill;
     public HealthBar healthBar;
     public SkillBar skillBar;

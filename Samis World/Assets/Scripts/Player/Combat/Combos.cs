@@ -1,3 +1,4 @@
+using Unity.Burst.Intrinsics;
 using UnityEngine;
 
 public class Combos : MonoBehaviour
@@ -6,6 +7,7 @@ public class Combos : MonoBehaviour
     public int combo;
     public bool isAttacking;
     public Player playerScript;
+    private PlayerAttack playerAttack;
     private RaycastHit2D[] hits;
 
     private float swordRunTimer = 0f;
@@ -16,7 +18,6 @@ public class Combos : MonoBehaviour
     [SerializeField] private float attackRange = 2f;
     [SerializeField] private LayerMask attackLayer;
     public float damageAmount = 1f;
-
     public void Comboss()
     {
         if (Input.GetKeyDown(KeyCode.Mouse0) && !isAttacking)
@@ -45,6 +46,7 @@ public class Combos : MonoBehaviour
             IDamagable iDamagable = hits[i].collider.gameObject.GetComponent<IDamagable>();
             if (iDamagable != null)
             {
+                damageAmount = playerAttack.bloodyDamageUnlocked ? playerAttack.GetDamage() : damageAmount;
                 iDamagable.Damage(damageAmount);
             }
         }
@@ -85,6 +87,7 @@ public class Combos : MonoBehaviour
 
     void Start()
     {
+        playerAttack = GetComponent<PlayerAttack>();
         combo = 0;
         isAttacking = false;
     }
