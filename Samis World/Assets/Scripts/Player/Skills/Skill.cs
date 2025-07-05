@@ -8,6 +8,7 @@ public class SkillDefinition : ScriptableObject
     public Sprite icon;
     public SkillType type;
     public float value;
+    public int skillCost;
 
     public enum SkillType { Passive, Active }
 }

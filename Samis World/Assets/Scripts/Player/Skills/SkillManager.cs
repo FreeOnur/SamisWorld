@@ -7,20 +7,8 @@ public class SkillManager : MonoBehaviour
     public List<SkillDefinition> allSkills;
     public List<SkillDefinition> chosenSkills = new List<SkillDefinition>();
     public PlayerAttack playerAttack;
-    public void ChooseRandomSkill(int count)
-    {
-        List<SkillDefinition> skillOptions = new List<SkillDefinition>();
 
-        while(skillOptions.Count < count)
-        {
-            SkillDefinition skill = allSkills[Random.Range(0, allSkills.Count)];
-            if (!skillOptions.Contains(skill) && !chosenSkills.Contains(skill))
-            {
-                skillOptions.Add(skill);
-            }
-        }
 
-    }
 
     public void AddSkill(SkillDefinition skill)
     {
