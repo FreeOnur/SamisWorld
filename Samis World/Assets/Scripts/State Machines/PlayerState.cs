@@ -8,6 +8,7 @@ public class PlayerState
     protected AnimatorBrain animatorBrain;
     protected PlayerData playerData;
     protected Player playerScript;
+    protected PlayerAttack playerAttack;
     public PlayerState(PlayerMovement player)
     {
         this.playerScript = player.playerScript;
@@ -15,6 +16,8 @@ public class PlayerState
         this.rb = player.PlayerRb;
         this.animator = player.Anim; 
         this.playerData = player.playerData;
+        this.playerAttack = player.playerAttack;
+
     }
     public virtual void Enter()
     {

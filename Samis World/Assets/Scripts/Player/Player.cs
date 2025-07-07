@@ -2,9 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : PlayerMovement
+public class Player : PlayerMovement, IDamagable
 {
     [SerializeField] private float currentHealth;
+    public float CurrentHealth => currentHealth;
     public float currentSkill;
     public HealthBar healthBar;
     public SkillBar skillBar;
@@ -25,7 +26,7 @@ public class Player : PlayerMovement
         if (isDead) return;
         if (Input.GetKeyDown(KeyCode.L))
         {
-            TakeDamage(20);
+            Damage(20);
         }
 
         if (Input.GetKeyDown(KeyCode.K))
@@ -34,7 +35,7 @@ public class Player : PlayerMovement
         }
     }
 
-    void TakeDamage(int damage)
+    public void Damage(float damage)
     {
         currentHealth -= damage;
         healthBar.SetHealth(currentHealth);
@@ -55,6 +56,8 @@ public class Player : PlayerMovement
     {
         if (isDead) return; // Prevent multiple calls
         isDead = true;
+        animator.SetTrigger("isDead");
+        GetComponent<PlayerMovement>().enabled = false;
     }
 
 }

@@ -45,6 +45,14 @@ public class JumpState : PlayerState
         {
             combos.Comboss();
         }
+        if (Input.GetKeyDown(KeyCode.Space) && playerAttack.doubleJumpUnlocked && playerAttack.jumpCountStart == 1 && !player.IsGrounded() && !player.IsTouchingWall())
+        {
+            player.ChangeState(new JumpState(player));
+        } else if (playerAttack.jumpCountStart == 2)
+        {
+            playerAttack.jumpCountStart = 0;
+            return;
+        }
 
     }
 
@@ -67,6 +75,7 @@ public class JumpState : PlayerState
 
     public override void Exit()
     {
+        playerAttack.jumpCountStart++;
         player.isJumping = false;
     }
 }

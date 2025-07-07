@@ -10,7 +10,7 @@ public class DashState : PlayerState
     public DashState(PlayerMovement player) : base(player) { }
     public override void Enter()
     {
-        playerScript.UseSkill(10);
+        
         if (playerScript.currentSkill <= 0) return;
         dashTime = dashDuration;
         isDashing = true;
@@ -18,10 +18,10 @@ public class DashState : PlayerState
         player.SpawnDust(new Vector3(player.transform.position.x, player.transform.position.y - 0.2f), facingRight);
         // Starte die Dash-Animation
         player.Play(Animations.DASH, 0, true, false);
-
+        playerScript.UseSkill(10);
         // Erstelle Staub-Effekt (optional)
 
-       
+
     }
 
     public override void HandleInput()

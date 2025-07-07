@@ -5,10 +5,11 @@ using UnityEngine;
 public class EnemyHealth : MonoBehaviour, IDamagable
 {
     [SerializeField] private float maxHealth = 3f;
+    private SkillPointManager skillPointManager;
 
     private float currentHealth;
 
-    public void Damage(float damageAmount)
+    public virtual void Damage(float damageAmount)
     {
         currentHealth -= damageAmount;
         if (currentHealth <= 0)
@@ -19,12 +20,14 @@ public class EnemyHealth : MonoBehaviour, IDamagable
 
     private void Die()
     {
+        skillPointManager.OnEnemyKilled();
         Destroy(gameObject);
     }
 
     void Start()
     {
         currentHealth = maxHealth;
+        skillPointManager = GameObject.Find("GameManager").GetComponent<SkillPointManager>();
     }
 
     // Update is called once per frame

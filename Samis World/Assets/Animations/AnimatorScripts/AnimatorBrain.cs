@@ -18,7 +18,8 @@ public class AnimatorBrain : MonoBehaviour
         Animator.StringToHash("Attack_2"),    // ATTACK_2 (8)
         Animator.StringToHash("Attack_3"),    // ATTACK_3 (9) 
         Animator.StringToHash("Death"),       // DEATH (10)
-        Animator.StringToHash("Climb")        // CLIMB (11)
+        Animator.StringToHash("Climb"),        // CLIMB (11)
+        Animator.StringToHash("Run_Sword")      // RUN_SWORD (12)
     };
     private Animator animator;
     private Animations[] currentAnimation;
@@ -114,5 +115,6 @@ public enum Animations
     ATTACK_3,
     DEATH,
     CLIMB,
-    NONE
+    NONE,
+    RUN_SWORD
 }
