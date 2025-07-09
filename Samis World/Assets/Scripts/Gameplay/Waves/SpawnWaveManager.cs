@@ -12,6 +12,7 @@ public class SpawnWaveManager : MonoBehaviour
     int enemyAmount;
     int spawnPosOffset = 10;
     int enemyMultiplier = 2;
+    int spawnDelay = 1;
     [Header("UI")]
     private TextMeshProUGUI waveCountText;
     [Header("Enemies")]
@@ -35,7 +36,7 @@ public class SpawnWaveManager : MonoBehaviour
             return false;
         }
     }
-    public void SpawnMixedEnemies(int totalEnemies)
+    public IEnumerator SpawnMixedEnemies(int totalEnemies)
     {
         int projectileCount = Mathf.FloorToInt(totalEnemies * 0.25f);
         int meleeCount = totalEnemies - projectileCount;
@@ -58,15 +59,20 @@ public class SpawnWaveManager : MonoBehaviour
         {
             Vector3 spawnPos = player.transform.position + new Vector3(Random.Range(-spawnPosOffset, spawnPosOffset), 0, 0);
             Instantiate(enemyPrefab, spawnPos, Quaternion.identity);
+            yield return new WaitForSeconds(spawnDelay);
         }
     }
 
+    IEnumerator loopDelay(int delayTime)
+    {
+        yield return new WaitForSeconds(delayTime);
+    }
     public void SpawnWaves()
     {
         if (waveFinished)
         {
             waveCount++;
-            SpawnMixedEnemies(enemyAmount);
+            StartCoroutine(SpawnMixedEnemies(enemyAmount));
             waveFinished = false;
             enemyAmount *= enemyMultiplier;
         }
