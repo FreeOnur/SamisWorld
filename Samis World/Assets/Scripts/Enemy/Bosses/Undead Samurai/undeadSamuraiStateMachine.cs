@@ -6,10 +6,9 @@ using UnityEngine;
 public class undeadSamuraiMovement : MonoBehaviour
 {
     [Header("Movement")]
-    public float speed = 200f;
+    public float speed = 100f;
     public float nextWaypointDistance = 2f;
     public float stopDistance = 2f;
-    public float jumpForce = 10f;
     [Header("BossFightRelated")]
     //Is the distance between boss and player when the boss should switch his attack from shortrange to longrange
     float attackSwitchDistance = 20f;
@@ -18,17 +17,33 @@ public class undeadSamuraiMovement : MonoBehaviour
     bool spawnUndeadAttackFinished = true;
     bool swordSpinAttackFinished = true;
     public Transform attackTransform;
-    float attackRange;
+    float attackRange = 3f; // Setze einen Standardwert
     float damageAmount = 10f;
     public LayerMask playerLayerMask;
     private float swordSpinStartTime;
+    private bool hasSpawnedUndead = false;
     [Header("PerformAttack")]
     float attackTimer;
     float attackCooldown = 2f;
     float lastAttackTime;
     [Header("SwordSpinAttack")]
-    float swordSpinAttackCooldown = 0.3f;
+    float swordSpinAttackCooldown = 0.1f; // Reduziert von 0.3f auf 0.1f für schnelleren Damage
+    private float lastSpinDamageTime = 0f;
+    public float spinDamageInterval = 0.1f; // Reduziert von 0.3f auf 0.1f
+    private bool canDamagePlayer = true; // Neuer Flag für Damage-Kontrolle
+    private float damageResetInterval = 0.2f; // Zeit zwischen Damage-Resets
+    private bool startSwordSpinAttack = true;
+    [Header("Grounded")]
+    public float detectionRange = 5f;
+    public Transform groundCheck;
+    public LayerMask groundLayer;
+    [Header("MoveRightAndLeft")]
+    private float moveDirection = 1f; // 1 = rechts, -1 = links
+    private float moveDuration = 1f; // Zeit wie lange er in eine Richtung läuft
+    private float moveTimer = 0f;
 
+    float pathUpdateInterval = 0.5f;
+    float lastPathUpdateTime;
     public enum State
     {
         Idle,
@@ -93,14 +108,47 @@ public class undeadSamuraiMovement : MonoBehaviour
     void spawnUndeadAttack()
     {
         spawnUndeadAttackFinished = false;
-        Vector3 spawnPos = gameObject.transform.position + new Vector3(Random.Range(-spawnPosOffset, spawnPosOffset), 0, 0);
         int spawnUndeadAmount = Random.Range(5, 10);
+
         for (int i = 0; i < spawnUndeadAmount; i++)
         {
-            Instantiate(undeadEnemyPrefab, gameObject.transform.position, Quaternion.identity);
+            Vector3 spawnPos = gameObject.transform.position + new Vector3(Random.Range(-spawnPosOffset, spawnPosOffset), 0, 0);
+            Instantiate(undeadEnemyPrefab, spawnPos, Quaternion.identity);
+        }
+    }
+    void ChaseTarget()
+    {
+        if (Time.time - lastPathUpdateTime >= pathUpdateInterval)
+        {
+            UpdatePath();
+            lastPathUpdateTime = Time.time;
+        }
+
+        if (path == null || currentWayPoint >= path.vectorPath.Count)
+            return;
+
+        // Richtung berechnen
+        Vector2 direction = ((Vector2)path.vectorPath[currentWayPoint] - rb.position).normalized;
+
+        // Nur horizontale Bewegung
+        Vector2 force = new Vector2(direction.x, 0) * speed;
+
+        rb.AddForce(force); // Keine Y-Kraft, kein Springen nötig
+
+
+        // Nächster Wegpunkt?
+        float distance = Vector2.Distance(rb.position, path.vectorPath[currentWayPoint]);
+        if (distance < nextWaypointDistance)
+        {
+            currentWayPoint++;
         }
     }
 
+    public bool IsGrounded()
+    {
+        if (groundCheck == null) return true; // Fallback
+        return Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
+    }
     public bool CheckIfAllEnemiesDead()
     {
         GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
@@ -113,54 +161,66 @@ public class undeadSamuraiMovement : MonoBehaviour
             return false;
         }
     }
+    void moveLeftAndRight()
+    {
+        moveTimer += Time.deltaTime;
+        if(moveTimer > moveDuration)
+        {
+            moveDirection *= -1;
+            moveTimer = 0;
+        }
+        Vector2 force = new Vector2(moveDirection, 0) * speed;
+
+
+        rb.AddForce(force);
+    }
     void swordSpinAttack()
     {
-        swordSpinAttackFinished = false;
-        Debug.Log("Perform Sword Spin Attack called!");
+        // Prüfe kontinuierlich auf Kollision während des Spin-Attacks
+        Collider2D hit = Physics2D.OverlapCircle(gameObject.transform.position, 0, playerLayerMask);
 
-        Debug.Log($"Checking attack at position: {gameObject.transform.position}, Range: {attackRange}");
-
-        Collider2D hit = Physics2D.OverlapCircle(gameObject.transform.position, attackRange, playerLayerMask);
-
-        if (hit != null)
+        if (hit != null && canDamagePlayer)
         {
-            Debug.Log($"Hit detected: {hit.name}");
             IDamagable damageable = hit.GetComponent<IDamagable>();
             if (damageable != null)
             {
-                Debug.Log($"Dealing {damageAmount} damage!");
                 damageable.Damage(damageAmount);
+                canDamagePlayer = false; // Verhindert sofortigen erneuten Damage
+                // Setze den Damage-Flag nach kurzer Zeit zurück
+                StartCoroutine(ResetDamageFlag());
             }
-            else
-            {
-                Debug.LogError("No IDamagable component found on " + hit.name);
-            }
-        }
-        else
-        {
-            Debug.Log("No hit detected in attack range!");
         }
     }
+
+    // Coroutine zum Zurücksetzen des Damage-Flags
+    private IEnumerator ResetDamageFlag()
+    {
+        yield return new WaitForSeconds(damageResetInterval);
+        canDamagePlayer = true;
+    }
+
+    // Verbesserte swordSpinAttackExtend Methode
     void swordSpinAttackExtend()
     {
-        attackTimer += Time.deltaTime;
+        // Führe den Spin-Attack kontinuierlich aus, nicht nur bei Timer-Intervallen
+        swordSpinAttack();
 
-        // Perform attack
+        // Optional: Behalte den Timer für andere Zwecke
+        attackTimer += Time.deltaTime;
         if (attackTimer >= swordSpinAttackCooldown)
         {
-            swordSpinAttack();
             lastAttackTime = Time.time;
             attackTimer = 0f;
         }
     }
-    
+
     void hardAttack()
     {
 
     }
     void Update()
     {
-        switch(currentState)
+        switch (currentState)
         {
             case State.Idle:
                 // wenn ich zum swordSpinAttack wechsle dann muss ich noch swordSpinStartTime = Time.time; hinzufügen also danach damit ich dan zählen kann zum Beispiel
@@ -169,37 +229,56 @@ public class undeadSamuraiMovement : MonoBehaviour
                  * und attacktimer = 0; stellen
                  * swordSpinStartTime = Time.time;
                  * } */
+                if (10 >= GetDistanceToTarget() && startSwordSpinAttack)
+                {
+                    currentState = State.swordSpinAttack;
+                    swordSpinStartTime = Time.time;
+                    attackTimer = 0;
+                    canDamagePlayer = true; // Reset damage flag beim Start des Spin-Attacks
+                    startSwordSpinAttack = false;
+                }
+                else if (9 <= GetDistanceToTarget())
+                {
+                    currentState = State.spawnUndeadAttack;
+                    startSwordSpinAttack = true;
+                }
                 break;
 
             case State.Chase:
- 
                 break;
 
             case State.spawnUndeadAttack:
-                UpdatePath();
+                if (!hasSpawnedUndead)
+                {
+                    spawnUndeadAttack();
+                    hasSpawnedUndead = true;
+                }
 
                 attackTimer += Time.deltaTime;
 
-                // Perform attack
                 if (attackTimer >= attackCooldown)
                 {
                     PerformAttack();
                     lastAttackTime = Time.time;
                     attackTimer = 0f;
                 }
-                spawnUndeadAttack();
+
                 spawnUndeadAttackFinished = CheckIfAllEnemiesDead();
-                if(spawnUndeadAttackFinished)
+
+                if (spawnUndeadAttackFinished)
                 {
+                    hasSpawnedUndead = false;
                     currentState = State.Idle;
                 }
                 break;
 
             case State.swordSpinAttack:
                 swordSpinAttackExtend();
-                if (Time.time - swordSpinStartTime >= 2f)
+                moveLeftAndRight();
+                if (Time.time - swordSpinStartTime >= 10f)
                 {
                     currentState = State.Idle;
+                    canDamagePlayer = true; // Reset beim Verlassen des Spin-Attacks
                 }
                 break;
 
@@ -210,35 +289,15 @@ public class undeadSamuraiMovement : MonoBehaviour
     }
     private void PerformAttack()
     {
-        Debug.Log("PerformAttack called!");
-
-        if (attackTransform == null)
-        {
-            Debug.LogError("Attack Transform is null!");
-            return;
-        }
-
-        Debug.Log($"Checking attack at position: {attackTransform.position}, Range: {attackRange}");
-
         Collider2D hit = Physics2D.OverlapCircle(attackTransform.position, attackRange, playerLayerMask);
 
         if (hit != null)
         {
-            Debug.Log($"Hit detected: {hit.name}");
             IDamagable damageable = hit.GetComponent<IDamagable>();
             if (damageable != null)
             {
-                Debug.Log($"Dealing {damageAmount} damage!");
                 damageable.Damage(damageAmount);
             }
-            else
-            {
-                Debug.LogError("No IDamagable component found on " + hit.name);
-            }
-        }
-        else
-        {
-            Debug.Log("No hit detected in attack range!");
         }
     }
 }
