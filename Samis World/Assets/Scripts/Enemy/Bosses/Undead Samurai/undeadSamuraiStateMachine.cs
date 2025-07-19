@@ -27,20 +27,29 @@ public class undeadSamuraiMovement : MonoBehaviour
     float attackCooldown = 2f;
     float lastAttackTime;
     [Header("SwordSpinAttack")]
-    float swordSpinAttackCooldown = 0.1f; // Reduziert von 0.3f auf 0.1f für schnelleren Damage
+    float swordSpinAttackCooldown = 0.1f; // Reduziert von 0.3f auf 0.1f fÃ¼r schnelleren Damage
     private float lastSpinDamageTime = 0f;
     public float spinDamageInterval = 0.1f; // Reduziert von 0.3f auf 0.1f
-    private bool canDamagePlayer = true; // Neuer Flag für Damage-Kontrolle
+    private bool canDamagePlayer = true; // Neuer Flag fÃ¼r Damage-Kontrolle
     private float damageResetInterval = 0.2f; // Zeit zwischen Damage-Resets
     private bool startSwordSpinAttack = true;
+    [SerializeField] private float swordSpinAttackRange = 0.1f;
     [Header("Grounded")]
     public float detectionRange = 5f;
     public Transform groundCheck;
     public LayerMask groundLayer;
     [Header("MoveRightAndLeft")]
     private float moveDirection = 1f; // 1 = rechts, -1 = links
-    private float moveDuration = 1f; // Zeit wie lange er in eine Richtung läuft
+    private float moveDuration = 1f; // Zeit wie lange er in eine Richtung lÃ¤uft
     private float moveTimer = 0f;
+    [Header("DashAttack")]
+    bool isDashing;
+    public float dashTime;
+    public float dashSpeed = 20f;
+    public float dashDuration = 0.5f;
+    public bool startDashAttack;
+    public bool startUndeadAttack;
+    private float dashStartTime; // Neue Variable fÃ¼r Dash-Timing
 
     float pathUpdateInterval = 0.5f;
     float lastPathUpdateTime;
@@ -49,8 +58,12 @@ public class undeadSamuraiMovement : MonoBehaviour
         Idle,
         Chase,
         spawnUndeadAttack,
-        hardAttack,
+        dashAttack,
         swordSpinAttack,
+        waveAttack, //spawnt eine schwarze welle die so damage macht usw keine ahnugn
+        teleportAttack // er geht in boden und taucht beim spieler auf und macht damage sobald er auftaucht
+        //!NOTIZ! Es soll noch einen rage modus geben wo er mehrere attacken schnell kombiniert ab 30% unter leben wird er sauer und stÃ¤rker usw
+
     }
     public State currentState;
 
@@ -62,6 +75,7 @@ public class undeadSamuraiMovement : MonoBehaviour
     [HideInInspector] public bool reachedEndOfPath = false;
     void Start()
     {
+        dashTime = dashDuration;
         seeker = GetComponent<Seeker>();
         rb = GetComponent<Rigidbody2D>();
         target = GameObject.FindGameObjectWithTag("Player")?.transform;
@@ -71,8 +85,9 @@ public class undeadSamuraiMovement : MonoBehaviour
         if (rb == null) Debug.LogError("Rigidbody2D component missing on " + gameObject.name);
         if (target == null) Debug.LogError("Player with tag 'Player' not found!");
 
-        // Fix rotation
+        // Fix rotation und Collision Detection
         rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+        rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous; // Gegen Tunneling
         currentState = State.Idle;
     }
     // Is the Distance Between Boss and Target
@@ -133,10 +148,10 @@ public class undeadSamuraiMovement : MonoBehaviour
         // Nur horizontale Bewegung
         Vector2 force = new Vector2(direction.x, 0) * speed;
 
-        rb.AddForce(force); // Keine Y-Kraft, kein Springen nötig
+        rb.AddForce(force); // Keine Y-Kraft, kein Springen nÃ¶tig
 
 
-        // Nächster Wegpunkt?
+        // NÃ¤chster Wegpunkt?
         float distance = Vector2.Distance(rb.position, path.vectorPath[currentWayPoint]);
         if (distance < nextWaypointDistance)
         {
@@ -164,7 +179,7 @@ public class undeadSamuraiMovement : MonoBehaviour
     void moveLeftAndRight()
     {
         moveTimer += Time.deltaTime;
-        if(moveTimer > moveDuration)
+        if (moveTimer > moveDuration)
         {
             moveDirection *= -1;
             moveTimer = 0;
@@ -176,8 +191,8 @@ public class undeadSamuraiMovement : MonoBehaviour
     }
     void swordSpinAttack()
     {
-        // Prüfe kontinuierlich auf Kollision während des Spin-Attacks
-        Collider2D hit = Physics2D.OverlapCircle(gameObject.transform.position, 0, playerLayerMask);
+        // PrÃ¼fe kontinuierlich auf Kollision wÃ¤hrend des Spin-Attacks
+        Collider2D hit = Physics2D.OverlapCircle(gameObject.transform.position, swordSpinAttackRange, playerLayerMask);
 
         if (hit != null && canDamagePlayer)
         {
@@ -186,26 +201,51 @@ public class undeadSamuraiMovement : MonoBehaviour
             {
                 damageable.Damage(damageAmount);
                 canDamagePlayer = false; // Verhindert sofortigen erneuten Damage
-                // Setze den Damage-Flag nach kurzer Zeit zurück
+                // Setze den Damage-Flag nach kurzer Zeit zurÃ¼ck
                 StartCoroutine(ResetDamageFlag());
             }
         }
     }
 
-    // Coroutine zum Zurücksetzen des Damage-Flags
+    void dashAttack()
+    {
+        if (isDashing)
+        {
+            Debug.Log("Dashing...");
+            Vector2 dashDirection = (target != null) ? ((target.position - transform.position).normalized) : Vector2.right;
+            rb.velocity = new Vector2(dashDirection.x * dashSpeed, rb.velocity.y);
+
+            if (Time.time - dashStartTime >= dashDuration)
+            {
+                Debug.Log("Dash finished.");
+                isDashing = false;
+                rb.velocity = new Vector2(0, rb.velocity.y);
+            }
+            Collider2D hit = Physics2D.OverlapCircle(transform.position, 0.5f, playerLayerMask);
+            if (hit != null && canDamagePlayer)
+            {
+                IDamagable damagable = hit.GetComponent<IDamagable>();
+                if (damagable != null)
+                {
+                    damagable.Damage(damageAmount);
+                    canDamagePlayer = false;
+                    StartCoroutine(ResetDamageFlag());
+                    Debug.Log("Player hit during dash!");
+                }
+            }
+        }
+    }
+
+    // Coroutine zum ZurÃ¼cksetzen des Damage-Flags
     private IEnumerator ResetDamageFlag()
     {
         yield return new WaitForSeconds(damageResetInterval);
         canDamagePlayer = true;
     }
 
-    // Verbesserte swordSpinAttackExtend Methode
     void swordSpinAttackExtend()
     {
-        // Führe den Spin-Attack kontinuierlich aus, nicht nur bei Timer-Intervallen
         swordSpinAttack();
-
-        // Optional: Behalte den Timer für andere Zwecke
         attackTimer += Time.deltaTime;
         if (attackTimer >= swordSpinAttackCooldown)
         {
@@ -214,33 +254,35 @@ public class undeadSamuraiMovement : MonoBehaviour
         }
     }
 
-    void hardAttack()
-    {
-
-    }
     void Update()
     {
         switch (currentState)
         {
             case State.Idle:
-                // wenn ich zum swordSpinAttack wechsle dann muss ich noch swordSpinStartTime = Time.time; hinzufügen also danach damit ich dan zählen kann zum Beispiel
-                /* if(...) {
-                 * currentState = State.Idle
-                 * und attacktimer = 0; stellen
-                 * swordSpinStartTime = Time.time;
-                 * } */
-                if (10 >= GetDistanceToTarget() && startSwordSpinAttack)
+                if (startSwordSpinAttack)
                 {
                     currentState = State.swordSpinAttack;
                     swordSpinStartTime = Time.time;
                     attackTimer = 0;
-                    canDamagePlayer = true; // Reset damage flag beim Start des Spin-Attacks
+                    canDamagePlayer = true;
                     startSwordSpinAttack = false;
+                    startDashAttack = true;
                 }
-                else if (9 <= GetDistanceToTarget())
+                else if (9 <= GetDistanceToTarget() && startUndeadAttack)
                 {
                     currentState = State.spawnUndeadAttack;
-                    startSwordSpinAttack = true;
+                    canDamagePlayer = true;
+                    startDashAttack = true;
+                }
+                else if (5 <= GetDistanceToTarget() && startDashAttack)
+                {
+                    Debug.Log("Switching to Dash Attack State");
+                    canDamagePlayer = true;
+                    currentState = State.dashAttack;
+                    isDashing = true; // Setze isDashing hier
+                    dashStartTime = Time.time; // Setze den Startzeitpunkt
+                    startDashAttack = false; // Deaktiviere nach Transition
+                    startUndeadAttack = true; // Optional, je nach Logik
                 }
                 break;
 
@@ -278,12 +320,18 @@ public class undeadSamuraiMovement : MonoBehaviour
                 if (Time.time - swordSpinStartTime >= 10f)
                 {
                     currentState = State.Idle;
-                    canDamagePlayer = true; // Reset beim Verlassen des Spin-Attacks
+                    canDamagePlayer = true;
                 }
                 break;
 
-            case State.hardAttack:
-
+            case State.dashAttack:
+                dashAttack();
+                if (!isDashing && Time.time - dashStartTime >= dashDuration)
+                {
+                    Debug.Log("Dash Attack finished, returning to Idle");
+                    currentState = State.Idle;
+                    startDashAttack = false; // Erlaube erneuten Dash
+                }
                 break;
         }
     }

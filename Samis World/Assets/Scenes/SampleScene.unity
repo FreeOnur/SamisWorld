@@ -1474,10 +1474,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1258553749}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d25f4c38c168391409b6b2f029998359, type: 3}
+  m_Script: {fileID: 11500000, guid: 485fedb50cbea0541911dc154fee1a34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 60
+  speed: 50
   nextWaypointDistance: 2
   stopDistance: 2
   undeadEnemyPrefab: {fileID: 8602331695675854764, guid: 04eeb2975d4fdc54786c74ef6e51aa55, type: 3}
@@ -1485,12 +1485,16 @@ MonoBehaviour:
   playerLayerMask:
     serializedVersion: 2
     m_Bits: 256
-  spinDamageInterval: 0.3
+  spinDamageInterval: 2
   detectionRange: 5
   groundCheck: {fileID: 2079990637}
   groundLayer:
     serializedVersion: 2
     m_Bits: 136
+  dashTime: 0
+  dashSpeed: 20
+  dashDuration: 0.2
+  startDashAttack: 0
   currentState: 0
   target: {fileID: 0}
   seeker: {fileID: 0}
@@ -1693,7 +1697,7 @@ Transform:
   m_GameObject: {fileID: 1424627635}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 14.34, y: 5.09, z: 0.0080998335}
+  m_LocalPosition: {x: 14.39, y: 2.95, z: 0.0080998335}
   m_LocalScale: {x: -5.346463, y: 14.52755, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1931,7 +1935,7 @@ Transform:
   m_GameObject: {fileID: 1817180965}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -16.19, y: 5.03, z: 0.0080998335}
+  m_LocalPosition: {x: -16.08, y: 3.33, z: 0.0080998335}
   m_LocalScale: {x: -5.346463, y: 14.52755, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
