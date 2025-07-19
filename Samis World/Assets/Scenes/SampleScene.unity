@@ -1486,6 +1486,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   spinDamageInterval: 2
+  swordSpinAttackRange: 0.1
   detectionRange: 5
   groundCheck: {fileID: 2079990637}
   groundLayer:
@@ -1493,8 +1494,11 @@ MonoBehaviour:
     m_Bits: 136
   dashTime: 0
   dashSpeed: 20
-  dashDuration: 0.2
+  dashDuration: 0.6
   startDashAttack: 0
+  startUndeadAttack: 0
+  wavePrefab: {fileID: 791156401417967742, guid: 7fe74be26982d5542abd1f7d51eee5c6, type: 3}
+  waveSpeed: 5
   currentState: 0
   target: {fileID: 0}
   seeker: {fileID: 0}

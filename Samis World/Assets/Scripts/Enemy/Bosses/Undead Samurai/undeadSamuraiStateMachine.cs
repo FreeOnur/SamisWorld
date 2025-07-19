@@ -50,9 +50,11 @@ public class undeadSamuraiMovement : MonoBehaviour
     public bool startDashAttack;
     public bool startUndeadAttack;
     private float dashStartTime; // Neue Variable für Dash-Timing
-
+    [Header("WaveAttack")]
     float pathUpdateInterval = 0.5f;
     float lastPathUpdateTime;
+    public GameObject wavePrefab;
+    public float waveSpeed = 5f;
     public enum State
     {
         Idle,
@@ -60,7 +62,7 @@ public class undeadSamuraiMovement : MonoBehaviour
         spawnUndeadAttack,
         dashAttack,
         swordSpinAttack,
-        waveAttack, //spawnt eine schwarze welle die so damage macht usw keine ahnugn
+        waveAttack, //spawnt eine schwarze welle die so damage macht usw keine ahnung
         teleportAttack // er geht in boden und taucht beim spieler auf und macht damage sobald er auftaucht
         //!NOTIZ! Es soll noch einen rage modus geben wo er mehrere attacken schnell kombiniert ab 30% unter leben wird er sauer und stärker usw
 
@@ -254,6 +256,18 @@ public class undeadSamuraiMovement : MonoBehaviour
         }
     }
 
+    void waveAttack()
+    {
+        if (wavePrefab == null || target == null)
+            return;
+        Vector2 direction = (target.position - transform.position).normalized;
+        GameObject projectile = Object.Instantiate(wavePrefab, transform.position, Quaternion.identity);
+        Rigidbody2D rb = projectile.GetComponent<Rigidbody2D>();
+        if(rb != null)
+        {
+            rb.velocity = direction * waveSpeed;
+        }
+    }
     void Update()
     {
         switch (currentState)
