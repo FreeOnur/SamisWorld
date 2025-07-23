@@ -5,9 +5,12 @@ using UnityEngine;
 public class EnemyHealth : MonoBehaviour, IDamagable
 {
     [SerializeField] private float maxHealth = 3f;
+    public float MaxHealth => maxHealth;
     private SkillPointManager skillPointManager;
 
     private float currentHealth;
+    public float CurrentHealth => currentHealth;
+
 
     public virtual void Damage(float damageAmount)
     {
@@ -33,6 +36,6 @@ public class EnemyHealth : MonoBehaviour, IDamagable
     // Update is called once per frame
     void Update()
     {
-        
+        Debug.Log(currentHealth);
     }
 }

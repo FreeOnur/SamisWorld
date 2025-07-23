@@ -451,6 +451,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4468731171099209568, guid: d6251940ec9e39044895231d000e397f, type: 3}
+      propertyPath: maxHealth
+      value: 200
+      objectReference: {fileID: 0}
     - target: {fileID: 8602331695675854764, guid: d6251940ec9e39044895231d000e397f, type: 3}
       propertyPath: m_Name
       value: Boss
@@ -1499,6 +1503,12 @@ MonoBehaviour:
   startUndeadAttack: 0
   wavePrefab: {fileID: 791156401417967742, guid: 7fe74be26982d5542abd1f7d51eee5c6, type: 3}
   waveSpeed: 5
+  wavesAmount: 2
+  waveSpawnTime: 2
+  startWaveAttack: 0
+  waveAttackStarted: 0
+  startTeleportAttack: 0
+  teleportStarted: 0
   currentState: 0
   target: {fileID: 0}
   seeker: {fileID: 0}
@@ -1939,8 +1949,8 @@ Transform:
   m_GameObject: {fileID: 1817180965}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -16.08, y: 3.33, z: 0.0080998335}
-  m_LocalScale: {x: -5.346463, y: 14.52755, z: 1}
+  m_LocalPosition: {x: -16.4757, y: 3.33, z: 0.0080998335}
+  m_LocalScale: {x: -6.1384974, y: 14.52755, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 342722432}

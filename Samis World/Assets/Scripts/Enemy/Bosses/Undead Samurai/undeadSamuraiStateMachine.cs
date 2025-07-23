@@ -2,6 +2,8 @@ using Pathfinding;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
+//Eine Game Mechanic hinzufügen für den spieler wo er schwertangriffe blocken kann für eine gewisse Zeit bis der Balken voll wird
 
 public class undeadSamuraiMovement : MonoBehaviour
 {
@@ -11,7 +13,6 @@ public class undeadSamuraiMovement : MonoBehaviour
     public float stopDistance = 2f;
     [Header("BossFightRelated")]
     //Is the distance between boss and player when the boss should switch his attack from shortrange to longrange
-    float attackSwitchDistance = 20f;
     public GameObject undeadEnemyPrefab;
     float spawnPosOffset = 5;
     bool spawnUndeadAttackFinished = true;
@@ -55,6 +56,19 @@ public class undeadSamuraiMovement : MonoBehaviour
     float lastPathUpdateTime;
     public GameObject wavePrefab;
     public float waveSpeed = 5f;
+    public float wavesAmount = 2f;
+    public float waveSpawnTime = 0;
+    public bool startWaveAttack = false;
+    public bool waveAttackStarted = false;
+    [Header("BossAttributes")]
+    private EnemyHealth bossHealth;
+    [Header("TeleportAttack")]
+    float teleportTime = 3f;
+    float dirtTime = 2f;
+    [SerializeField]private bool startTeleportAttack = false;
+    [SerializeField]private bool teleportStarted = false;
+    Vector3 teleportPosition;
+
     public enum State
     {
         Idle,
@@ -81,6 +95,7 @@ public class undeadSamuraiMovement : MonoBehaviour
         seeker = GetComponent<Seeker>();
         rb = GetComponent<Rigidbody2D>();
         target = GameObject.FindGameObjectWithTag("Player")?.transform;
+        bossHealth = GetComponent<EnemyHealth>();
 
         // Debug missing components
         if (seeker == null) Debug.LogError("Seeker component missing on " + gameObject.name);
@@ -203,7 +218,6 @@ public class undeadSamuraiMovement : MonoBehaviour
             {
                 damageable.Damage(damageAmount);
                 canDamagePlayer = false; // Verhindert sofortigen erneuten Damage
-                // Setze den Damage-Flag nach kurzer Zeit zurück
                 StartCoroutine(ResetDamageFlag());
             }
         }
@@ -268,39 +282,120 @@ public class undeadSamuraiMovement : MonoBehaviour
             rb.velocity = direction * waveSpeed;
         }
     }
+    private IEnumerator WaveAttackSequence()
+    {
+        for (int i = 0; i < wavesAmount; i++)
+        {
+            waveAttack();
+            yield return new WaitForSeconds(waveSpawnTime);
+        }
+
+        currentState = State.Idle;
+        waveAttackStarted = false;
+    }
+    private void RageMode()
+    {
+        if (bossHealth.CurrentHealth < bossHealth.MaxHealth/3)
+        {
+            speed = 60f;
+            nextWaypointDistance = 1f;
+            stopDistance = 1f;
+            attackRange = 4f; // Setze einen Standardwert
+            damageAmount = 50f;
+            attackCooldown = 1f;
+            waveSpeed = 5f;
+            wavesAmount = 5f;
+            //Alle attribute ändern und stärker machen
+        }
+    }
+    IEnumerator teleportAttack()
+    {
+        yield return new WaitForSeconds(dirtTime);
+        transform.position = teleportPosition;
+        damageAmount = 30f;
+        Collider2D hit = Physics2D.OverlapCircle(transform.position, attackRange, playerLayerMask);
+
+        if (hit != null)
+        {
+            IDamagable damageable = hit.GetComponent<IDamagable>();
+            if (damageable != null)
+            {
+                damageable.Damage(damageAmount);
+            }
+        }
+        damageAmount = 10f;
+        startTeleportAttack = false;
+        teleportStarted = false; // Reset für nächsten Teleport
+        currentState = State.Idle; // Zurück zu Idle
+    }
     void Update()
     {
+        RageMode();
         switch (currentState)
         {
             case State.Idle:
-                if (startSwordSpinAttack)
+                float distanceToTarget = GetDistanceToTarget();
+
+                if (startSwordSpinAttack && distanceToTarget <= 6f)
                 {
                     currentState = State.swordSpinAttack;
                     swordSpinStartTime = Time.time;
                     attackTimer = 0;
                     canDamagePlayer = true;
                     startSwordSpinAttack = false;
-                    startDashAttack = true;
+                    startUndeadAttack = true;
                 }
-                else if (9 <= GetDistanceToTarget() && startUndeadAttack)
+                else if (startUndeadAttack && distanceToTarget > 10f)
                 {
                     currentState = State.spawnUndeadAttack;
                     canDamagePlayer = true;
-                    startDashAttack = true;
+                    startUndeadAttack = false;
+
+                    if (Random.Range(0f, 1f) < 0.5f)
+                        startDashAttack = true;
+                    else
+                        startWaveAttack = true;
                 }
-                else if (5 <= GetDistanceToTarget() && startDashAttack)
+                else if (startDashAttack && distanceToTarget >= 4f && distanceToTarget <= 12f)
                 {
-                    Debug.Log("Switching to Dash Attack State");
                     canDamagePlayer = true;
                     currentState = State.dashAttack;
-                    isDashing = true; // Setze isDashing hier
-                    dashStartTime = Time.time; // Setze den Startzeitpunkt
-                    startDashAttack = false; // Deaktiviere nach Transition
-                    startUndeadAttack = true; // Optional, je nach Logik
+                    isDashing = true;
+                    dashStartTime = Time.time;
+                    startDashAttack = false;
+                    startWaveAttack = true;
+                }
+                else if (startWaveAttack && distanceToTarget >= 8f)
+                {
+                    currentState = State.waveAttack;
+                    startWaveAttack = false;
+                    startTeleportAttack = true;
+                }
+                else if (startTeleportAttack)
+                {
+                    teleportPosition = target.position;
+                    currentState = State.teleportAttack;
+                    if (Random.Range(0f, 1f) < 0.5f)
+                        startDashAttack = true;
+                    else
+                        startUndeadAttack = true;
+                }
+                else
+                {
+                    if (distanceToTarget <= 5f)
+                        startSwordSpinAttack = true;
+                    else if (distanceToTarget > 15f)
+                        startWaveAttack = true;
+                    else if (distanceToTarget >= 6f && distanceToTarget <= 10f)
+                        startDashAttack = true;
+                    else if (distanceToTarget > 8f && Random.Range(0f, 1f) < 0.3f)
+                        startUndeadAttack = true;
+                    else
+                        startSwordSpinAttack = true;
                 }
                 break;
-
             case State.Chase:
+                //Immer wenn der Boss damage bekommt soller für kurze Zeit den Spieler verfolgen und angreifen.
                 break;
 
             case State.spawnUndeadAttack:
@@ -347,6 +442,23 @@ public class undeadSamuraiMovement : MonoBehaviour
                     startDashAttack = false; // Erlaube erneuten Dash
                 }
                 break;
+
+            case State.waveAttack:
+                if (!waveAttackStarted)
+                {
+                    StartCoroutine(WaveAttackSequence());
+                    waveAttackStarted = true;
+                }
+                break;
+
+            case State.teleportAttack:
+                if (!teleportStarted)
+                {
+                    StartCoroutine(teleportAttack());
+                    teleportStarted = true;
+                }
+                break;
+
         }
     }
     private void PerformAttack()
@@ -362,4 +474,5 @@ public class undeadSamuraiMovement : MonoBehaviour
             }
         }
     }
+
 }
