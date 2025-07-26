@@ -77,7 +77,7 @@ public class undeadSamuraiMovement : MonoBehaviour
         dashAttack,
         swordSpinAttack,
         waveAttack, //spawnt eine schwarze welle die so damage macht usw keine ahnung
-        teleportAttack // er geht in boden und taucht beim spieler auf und macht damage sobald er auftaucht
+        teleportAttack // er geht in boden und taucht beim spieler auf und macht damage sobald er auftaucht || Ich sollte so machen dass wenn der angriff startet er basically einfach unsichtbar für den spieler wird und sich zu ihm bewegt und halt der boden wie ein maulwurf so hoch tut und dann so im spieler rausspring sozusagen
         //!NOTIZ! Es soll noch einen rage modus geben wo er mehrere attacken schnell kombiniert ab 30% unter leben wird er sauer und stärker usw
 
     }
@@ -308,13 +308,30 @@ public class undeadSamuraiMovement : MonoBehaviour
             //Alle attribute ändern und stärker machen
         }
     }
-    IEnumerator teleportAttack()
+    public IEnumerator teleportAttack()
     {
-        yield return new WaitForSeconds(dirtTime);
-        transform.position = teleportPosition;
-        damageAmount = 30f;
-        Collider2D hit = Physics2D.OverlapCircle(transform.position, attackRange, playerLayerMask);
+        if (teleportStarted || !startTeleportAttack) yield break;
 
+        damageAmount = 30f;
+        teleportStarted = true;
+        gameObject.GetComponent<Renderer>().enabled = false;
+
+        Vector3 targetPosition = target.position;
+        targetPosition.y -= 1f;
+        float elapsedTime = 0f;
+        while (elapsedTime < teleportTime)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, targetPosition, speed * Time.deltaTime);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        yield return new WaitForSeconds(dirtTime);
+
+        gameObject.GetComponent<Renderer>().enabled = true; // Werde sichtbar
+        rb.velocity = new Vector2(0f, 40f); // Aufwärtssprung
+
+        yield return new WaitForSeconds(0.1f); 
+        Collider2D hit = Physics2D.OverlapCircle(transform.position, attackRange, playerLayerMask);
         if (hit != null)
         {
             IDamagable damageable = hit.GetComponent<IDamagable>();
@@ -323,11 +340,14 @@ public class undeadSamuraiMovement : MonoBehaviour
                 damageable.Damage(damageAmount);
             }
         }
+
         damageAmount = 10f;
         startTeleportAttack = false;
-        teleportStarted = false; // Reset für nächsten Teleport
-        currentState = State.Idle; // Zurück zu Idle
+        teleportStarted = false;
+        rb.velocity = Vector2.zero;
+        currentState = State.Idle;
     }
+
     void Update()
     {
         RageMode();
@@ -452,10 +472,9 @@ public class undeadSamuraiMovement : MonoBehaviour
                 break;
 
             case State.teleportAttack:
-                if (!teleportStarted)
+                if (!teleportStarted && startTeleportAttack)
                 {
                     StartCoroutine(teleportAttack());
-                    teleportStarted = true;
                 }
                 break;
 
