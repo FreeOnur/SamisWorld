@@ -90,7 +90,7 @@ public abstract class BaseEnemyController : MonoBehaviour
         }
 
         stateMachine.Initialize(idleState);
-        InvokeRepeating("UpdatePath", 0f, 1f);
+        InvokeRepeating("UpdatePath", 0f, 0.5f);
 
         Debug.Log("State machine initialized successfully");
     }
@@ -105,6 +105,7 @@ public abstract class BaseEnemyController : MonoBehaviour
         }
 
         stateMachine.Update();
+        
     }
 
     void FixedUpdate()

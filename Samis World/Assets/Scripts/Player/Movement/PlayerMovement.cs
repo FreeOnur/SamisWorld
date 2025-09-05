@@ -97,7 +97,8 @@ public class PlayerMovement : AnimatorBrain
             playerData.PrintAllModifiers(); // Debug
         }
 
-        horizontalInput = Input.GetAxisRaw("Horizontal");
+        float rawInput = Input.GetAxisRaw("Horizontal");
+        horizontalInput = Mathf.Abs(rawInput) < 0.2f ? 0f : rawInput;
         currentState?.HandleInput();
         Flip();
 
@@ -110,6 +111,7 @@ public class PlayerMovement : AnimatorBrain
         CheckFallAndLandAnimations();
         CheckForLedge();
         WallState();
+        Debug.Log("HorizontalInput: " + horizontalInput);
     }
 
     private void FixedUpdate()

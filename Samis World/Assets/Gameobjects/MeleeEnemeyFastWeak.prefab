@@ -78,7 +78,7 @@ GameObject:
   - component: {fileID: 379043920228518332}
   - component: {fileID: 8475322662728071858}
   m_Layer: 6
-  m_Name: MeleeEnemy
+  m_Name: MeleeEnemeyFastWeak
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -278,7 +278,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8079a67494833bf45872a0f3ed5f74bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 200
+  speed: 360
   nextWaypointDistance: 2
   stopDistance: 2
   jumpForce: 10
@@ -288,8 +288,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 136
   attackRange: 2
-  attackCooldown: 2
-  damageAmount: 10
+  attackCooldown: 1
+  damageAmount: 3
   playerLayerMask:
     serializedVersion: 2
     m_Bits: 256
