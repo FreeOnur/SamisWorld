@@ -1,0 +1,21 @@
+GIMP Palette
+Name: Samis World - Biom 4 Vulkan / Asche-Schmiede
+Columns: 8
+#
+ 20  10   8	Himmel 1
+ 36  16  10	Himmel 2
+ 58  22  12	Himmel 3
+ 88  32  14	Himmel 4
+122  44  16	Horizont
+ 58  26  18	Fern
+ 42  18  12	Mitte
+ 20   8   6	Nah
+255 122  26	Glut
+255 154  58	Glut hell
+255 176 112	Randlicht
+ 74  68  64	Asche
+106  98  92	Asche hell
+ 20  10   8	Boden
+224 102  31	Boss Glut-Orange
+154  58  12	Boss dunkel
+255 160  74	Boss hell

@@ -1,0 +1,10 @@
+Freunde-Bosse – so funktioniert der Ordner
+==========================================
+
+00_Vorlage         Die leere Boss-Vorlage (ohne Spoiler). Diese Datei verschicken.
+01_Verschickt      Pro Freund ein Unterordner mit seiner eigenen Kopie der Vorlage.
+02_Zurückbekommen  Ausgefüllte Vorlagen hier ablegen, sobald sie zurückkommen.
+03_Im Spiel        Bosse, die fertig ins Spiel übernommen wurden.
+
+Wichtig: Die Vorlage enthält keine Spoiler. Das GDD (Samis World.docx) NICHT an Freunde schicken,
+dort stehen die Wahrheit über den Sensei und das Ende drin.

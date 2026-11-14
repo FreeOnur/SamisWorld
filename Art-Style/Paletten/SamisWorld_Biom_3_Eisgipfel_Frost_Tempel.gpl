@@ -1,0 +1,21 @@
+GIMP Palette
+Name: Samis World - Biom 3 Eisgipfel / Frost-Tempel
+Columns: 8
+#
+ 11  15  28	Himmel 1
+ 18  26  46	Himmel 2
+ 26  38  64	Himmel 3
+ 34  52  82	Himmel 4
+ 44  66  98	Horizont
+ 58  76 102	Fern
+ 42  58  84	Mitte
+ 16  26  44	Nah
+154 176 200	Schnee dunkel
+196 212 228	Schnee
+238 244 250	Schnee hell
+ 13  17  27	Boden
+255 179  90	Laterne
+188 208 244	Mond-Randlicht
+ 79 166 210	Boss Eisblau
+ 42 106 146	Boss dunkel
+154 216 242	Boss hell
