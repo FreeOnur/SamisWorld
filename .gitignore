@@ -70,3 +70,13 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+
+# --- Samis World v2 ---
+# GDD enthält Spoiler (Sensei, Ende) – nicht öffentlich hochladen
+/Samis World.docx
+
+# Office-/System-Temp-Dateien
+~$*
+Thumbs.db
+desktop.ini
+.DS_Store
